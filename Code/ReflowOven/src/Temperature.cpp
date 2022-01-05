@@ -1,0 +1,52 @@
+#include "Arduino.h"
+#include <Wire.h>
+#include <SparkFun_MCP9600.h>
+#include "Temperature.h"
+
+MCP9600 tempSensor;
+uint8_t risingAlert = 1; //What alert to use for detecting cold -> hot transitions.
+uint8_t fallingAlert = 3; //What alert to use for detecting hot -> cold transitions.
+                          //These numbers are arbitrary and can be anything from 1 to 4, but just can't be equal!
+
+float alertTemp = 29.5;  //What temperature to trigger the alert at (before hysteresis).
+                        //This is about the surface temperature of my finger, but please change this if 
+                        //you have colder/warmer hands or if the ambient temperature is different.
+uint8_t hysteresis = 2; //How much hysteresis to have, in degrees Celcius. Feel free to adjust this, but 2°C seems to be about right.
+
+void TempSetup(){
+    Wire.begin();
+    Wire.setClock(100000);
+    tempSensor.begin();       // Uses the default address (0x60) for SparkFun Thermocouple Amplifier
+    //tempSensor.begin(0x66); // Default address (0x66) for SparkX Thermocouple Amplifier
+
+  //check if the sensor is connected
+  if(tempSensor.isConnected()){
+    Serial.println("Device will acknowledge!");
+  }
+  else {
+    Serial.println("Device did not acknowledge! Freezing.");
+    while(1); //hang forever
+  }
+
+  //check if the Device ID is correct
+  if(tempSensor.checkDeviceID()){
+    Serial.println("Device ID is correct!");        
+  }
+  else {
+    Serial.println("Device ID is not correct! Freezing.");
+    while(1); //hang forever
+  }
+}
+
+float TempRead(){
+    Serial.print("Thermocouple: ");
+    Serial.print(tempSensor.getThermocoupleTemp());
+    Serial.print(" °C   Ambient: ");
+    Serial.print(tempSensor.getAmbientTemp());
+    Serial.print(" °C   Temperature Delta: ");
+    Serial.print(tempSensor.getTempDelta());
+    Serial.print(" °C");
+
+    Serial.println(); 
+    return 0;
+}
