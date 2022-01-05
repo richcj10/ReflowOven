@@ -1,0 +1,6 @@
+Designer ListBox
+
+Listboxes are most useful in saving screen space for other applications. It also gives an alternative approach to displaying selections in an application designed in Workshop IDE- Designer environment.
+
+For small sized screens, having a long list of selections won't fit in the module's screen. This codebase example demonstrates the possibility of using touch functions and basic clipping to navigate through a list of selection. The items enlisted for the demonstration is composed of color names. These can be changed to different target applications.
+

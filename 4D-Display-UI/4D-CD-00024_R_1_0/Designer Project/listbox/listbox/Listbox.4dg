@@ -1,0 +1,191 @@
+#platform "uLCD-35DT"
+
+#inherit "4DGL_16bitColours.fnc"
+
+//
+// Note  The way this is coded the entire list is printed every time and clipping is used to only print this visible entries.
+//       This works just fine when this list is small, but once it gets large the time to display or scroll the list becomes noticable.
+//       This could be fixed by only printing the visible entries, but extra code would be required to calculate these and adjust postop
+//       to enable it to work properly. This will, of course take more code, which will lower the available codespace, which could have a
+//       rather negative impact in the Picaso Genie environment.
+//
+// Note  Internal fonts are noticably faster than uSD fonts and hence work well with a larger list than uSD fonts do. Consider using
+//       Consider using txt_Height and txt_Width multipliers to make internal, or even uSD fonts easier to touch
+//
+// font to use for listbox
+//#constant font     -1           // select -1 to use usd font file "font.gci" and "font.dat"
+#constant font     FONT3       // otherwise use 'standard' font
+#constant fontMulH 2            // font height multiplier
+#constant fontMulW 2            // font width multiplier
+//#constant largelist             // uncomment to define a large list to show 'slowdown'
+
+// constants for demo part (and implementation, depending if fixed size is used)
+var items[1000] ;           // string to contain entries, could be mem_alloc'd
+
+// constants for listbox
+#constant maxent    100     // maximum number of entries in list
+#constant seljitter 3       // amount of y pixels that touch can move before it is considered a move and not a touch
+#constant selbgcol  BLUE    // selected background colour
+#constant normbgcol BLACK   // un-selected background colour
+#constant selfgcol  WHITE   // selected foreground colour
+#constant normfgcol LIME    // un-selected foreground colour
+#constant ygap      1       // space between entries, larger font is a better idea
+#constant boxcolour LIGHTGREY   // colour of the listbox
+#constant insidespace 5     // blank space inside listbox (+1)
+#constant boxwidth 1        // only 1 or 2 supported, see code
+
+var itempos[maxent] ;       // string pointer to each entry
+var itemsel ;               // selected item, -1 means nothing selected
+var itemcnt ;               // number of items
+var itemmaxh ;              // height of each item
+var itemsw ;                // number of items in window
+var postop ;                // top position in window (pixels)
+var vptop, vpleft, vpright ; // writeable area within listbox
+
+func printitems()
+    var i, j, bgc ;
+    gfx_Clipping(ON) ;
+    gfx_MoveTo(vpleft,vptop+postop) ;
+    for(i:=0; i<itemcnt; i++)
+        if (itemsel == i)
+            txt_FGcolour(selfgcol) ;
+            bgc := selbgcol ;
+        else
+            txt_FGcolour(normfgcol);
+            bgc := normbgcol ;
+        endif
+        txt_BGcolour(bgc);
+        j := itempos[i] ;
+        str_Printf(&j, "%s\n") ;
+        gfx_RectangleFilled(peekW(GFX_X2), peekW(GFX_Y1), vpright, peekW(GFX_Y1)+itemmaxh, bgc) ;       // fill out to width of listbox
+    next
+    gfx_RectangleFilled(vpleft, peekW(GFX_Y1)+itemmaxh, vpright, peekW(GFX_Y1)+itemmaxh*2, normbgcol) ; // fill out bottom of screen (only important at end or list)
+    gfx_Clipping(OFF) ;
+endfunc
+
+func listbox(var ipitems, var font, var top, var left, var bottom, var right)
+    var i, p, ogap, ts, tx, ty, topy, vpo, cit, cansel ;
+    txt_FontID(font) ;
+#IF fontMulH != 1
+    txt_Height(fontMulH);
+#ENDIF
+#IF fontMulH != 1
+    txt_Width(fontMulW);
+#ENDIF
+
+    itemcnt := 0 ;
+    ogap := txt_Ygap(ygap);                 // set text gap, again to help with touchability
+    p := str_Ptr(ipitems) ;
+    while(str_GetByte(p) != 0)              // find each entry
+        itempos[itemcnt++] := p ;           // save pointer intto the string
+        p := str_Find(&p, "," );            // find end of required string
+        str_PutByte(p++,'\0');              // change ',' to \0 to make individual strings
+    wend
+    itemsel := -1 ;
+    itemmaxh := charheight(str_GetByte(itempos[0])) ;
+    gfx_Rectangle(left, top, right, bottom, boxcolour) ;    // draw box to make listbox
+#IF boxwidth == 2
+    left++ ;
+    top++ ;
+    bottom-- ;
+    right-- ;
+    gfx_Rectangle(left, top, right, bottom, boxcolour) ;    // draw box to make listbox
+#ENDIF
+    vpleft  := left + insidespace ;
+    vptop   := top + insidespace ;
+    vpright := right - insidespace ;
+    bottom -= insidespace ;
+    itemsw := (bottom-vptop) / itemmaxh ;
+    gfx_ClipWindow(vpleft, vptop, vpright, bottom);           // set the clipping area
+    printitems() ;
+
+    touch_Set(TOUCH_ENABLE);
+    repeat
+        ts := touch_Get(TOUCH_STATUS) ;
+        tx := touch_Get(TOUCH_GETX) ;
+        ty := touch_Get(TOUCH_GETY) ;
+        if (ts == TOUCH_PRESSED)
+            if ((tx >= vpleft) && (tx <= vpright) && (ty >= vptop) &&  (ty <= bottom))
+                vpo := postop ;
+                topy := ty ;
+                cit := (ty - vptop - postop) / itemmaxh ;
+                cansel := 1 ;
+            else                                            // break loop if touched
+                break ;                                     // better just to ignore and use an 'ok' button
+            endif
+        else if (ts == TOUCH_RELEASED)
+            if (cansel)                                     // select if touch and release within an entry and no moving outside set limits
+                itemsel := cit ;
+                printitems() ;
+            endif
+        else if (ts == TOUCH_MOVING)
+            postop := vpo - topy + ty ;
+            if (postop > 0)                                 // ensure we can't go up beyond top
+                postop := 0 ;
+            else if (postop < -(itemcnt-itemsw)*itemmaxh)   // or down beyond bottom
+                postop := -(itemcnt-itemsw)*itemmaxh ;
+            endif
+            printitems() ;
+            if (ABS(topy-ty) > seljitter) cansel := 0 ;
+        endif
+    forever
+#IF fontMulH != 1
+    txt_Height(1);  // reset
+#ENDIF
+#IF fontMulH != 1
+    txt_Width(1);   // reset
+#ENDIF
+    txt_Ygap(ogap);                         // reset text gap
+    txt_FGcolour(normfgcol) ;
+    txt_BGcolour(normbgcol) ;
+    for(i:=1; i<itemcnt; i++)
+        str_PutByte(itempos[i]-1,',');      // change \0 back to ','
+    next
+    return itemsel ;
+endfunc
+
+func main()
+    var i, hFont ;
+    print("Touch entry to select\nSwipe up and down to move\nTouch outside box to exit") ;
+    to(items) ;
+    print("0 red,1 black,2 green,3 blue,4 pink,5 turqoise,6 grey,7 white,8 yellow,9 red,10 lime") ;
+#IF EXISTS largelist
+    for (i := 0; i < 50; i++)         // test of a huge list
+        to(APPEND) ;
+        print(",Item ", i+11) ;
+    next
+#ENDIF
+
+#IF font == -1
+    putstr("Mounting...\n");
+    if (!(file_Mount()))
+        while(!(file_Mount()))
+            putstr("Drive not mounted...");
+            pause(200);
+            gfx_Cls();
+            pause(200);
+        wend
+    endif
+    hFont := file_LoadImageControl("font.dat", "font.gci", 1); // Open handle to access uSD fonts, uncomment if required and change n to font number dropping a and c if > 9
+    if (!hFont)
+        print("Font file open failed") ;
+        repeat forever
+    endif
+#ELSE
+    hFont := font ;
+#ENDIF
+
+    repeat
+        i := listbox(items, hFont, 60, 20, 210, 200) ;      // (non string) pointer to item list, font to use (could be uSD font), top, left, bottom, right or listbox
+
+        gfx_MoveTo(0,240) ;
+        if (i == -1)
+            print("You didn't select anything") ;
+        else
+            print("You Selected item ",i,"       ") ;
+        endif
+//    print([STR] items) ;
+    forever
+
+endfunc
+

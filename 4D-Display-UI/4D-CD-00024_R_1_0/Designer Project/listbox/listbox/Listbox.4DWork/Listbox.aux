@@ -1,0 +1,214 @@
+==============================================================
+==============================================================
+4DGL Compiler 2.8.0.1 -- Copyright 2004-2015 4D Labs
+** F:\_diablo16\_App note\4D-AN-00xxx_R_1_0\listbox\Listbox.4dg
+compiled Thu May 14 11:37:57 2015
+
+==============================================================
+==============================================================
+
+
+No Ref for file
+[LINKING]
+function 3, main, address 226
+(main entry point)
+stack usage 4 + 4
+function 'main' requires no arguments
+function 'main' has no return value
+
+[LINKING]
+function 2, listbox, address 351
+stack usage 20 + 4
+function 'listbox' requires 6 argument
+function 'listbox' returns a value
+
+[LINKING]
+function 1, printitems, address 945
+stack usage 6 + 4
+function 'printitems' requires no arguments
+function 'printitems' has no return value
+
+[RESERVED WORDS]
+#inherit
+#LISTCODE
+#MODE
+#STACK
+#OPTIMIZE_ON
+#OPTIMIZE_OFF
+byte
+word
+dword
+float
+private
+#IF
+#IFNOT
+#ELSE
+#ENDIF
+#CONST
+#constant
+#USE
+USING
+func
+endfunc
+var
+#STOP
+#DATA
+#ASM
+#END
+#platform
+EXISTS
+#ERROR
+#MESSAGE
+#NOTICE
+sizeof
+argcount
+if
+else
+endif
+while
+wend
+repeat
+until
+forever
+return
+break
+continue
+for
+next
+switch
+case
+default
+endswitch
+print
+goto
+gosub
+endsub
+mcall
+lookup8
+lookup16
+
+[MACRO]
+
+[CONSTANTS]
+__MAXMEM                          00008000      32768  (usage 1)
+__MAXPROG                         00007FEE      32750  (usage 1)
+BLACK                             00000000          0  (usage 3)
+BLUE                              0000001F         31  (usage 3)
+boxcolour                         0000D69A      54938  (usage 3)
+boxwidth                          00000001          1  (usage 3)
+DIABLO                            00000003          3  (usage 3)
+font                              00000003          3  (usage 8)
+FONT3                             00000003          3  (usage 3)
+fontMulH                          00000002          2  (usage 15)
+fontMulW                          00000002          2  (usage 3)
+GFX_X2                            00000036         54  (usage 3)
+GFX_Y1                            00000035         53  (usage 12)
+insidespace                       00000005          5  (usage 12)
+LIGHTGREY                         0000D69A      54938  (usage 3)
+LIME                              000007E0       2016  (usage 3)
+maxent                            00000064        100  (usage 3)
+normbgcol                         00000000          0  (usage 9)
+normfgcol                         000007E0       2016  (usage 6)
+OFF                               00000000          0  (usage 3)
+ON                                00000001          1  (usage 3)
+selbgcol                          0000001F         31  (usage 3)
+selfgcol                          0000FFFF      65535  (usage 3)
+seljitter                         00000003          3  (usage 3)
+TOUCH_ENABLE                      00000000          0  (usage 3)
+TOUCH_GETX                        00000001          1  (usage 3)
+TOUCH_GETY                        00000002          2  (usage 3)
+TOUCH_MOVING                      00000003          3  (usage 3)
+TOUCH_PRESSED                     00000001          1  (usage 3)
+TOUCH_RELEASED                    00000002          2  (usage 3)
+TOUCH_STATUS                      00000000          0  (usage 3)
+WHITE                             0000FFFF      65535  (usage 3)
+ygap                              00000001          1  (usage 3)
+
+[PmmC FUNCTIONS]
+ABS                               FFFFFFCB         -53  args=1 r=1  (usage 3)
+charheight                        FFFFFFF4         -12  args=1 r=1  (usage 3)
+gfx_Clipping                      FFFFFF46        -186  args=1 r=1  (usage 6)
+gfx_ClipWindow                    FFFFFF6A        -150  args=4 r=0  (usage 3)
+gfx_Cls                           FFFFFF82        -126  args=0 r=0  (usage 1)
+gfx_MoveTo                        FFFFFF81        -127  args=2 r=0  (usage 6)
+gfx_Rectangle                     FFFFFF7A        -134  args=5 r=0  (usage 4)
+gfx_RectangleFilled               FFFFFF79        -135  args=5 r=0  (usage 6)
+pause                             FFFFFFFA          -6  args=1 r=0  (usage 2)
+peekW                             FFFFFFDE         -34  args=1 r=1  (usage 15)
+putstr                            FFFFFFF7          -9  args=1 r=1  (usage 2)
+str_Find                          FFFFFE1F        -481  args=2 r=1  (usage 3)
+str_GetByte                       FFFFFE25        -475  args=1 r=1  (usage 6)
+str_Printf                        FFFFFE1C        -484  args=2 r=1  (usage 3)
+str_Ptr                           FFFFFE2A        -470  args=1 r=1  (usage 3)
+str_PutByte                       FFFFFE23        -477  args=2 r=0  (usage 6)
+to                                FFFFFFFF          -1  args=1 r=0  (usage 4)
+touch_Get                         FFFFFE68        -408  args=1 r=1  (usage 9)
+touch_Set                         FFFFFE69        -407  args=1 r=0  (usage 3)
+txt_BGcolour                      FFFFFFED         -19  args=1 r=1  (usage 6)
+txt_FGcolour                      FFFFFFEE         -18  args=1 r=1  (usage 9)
+txt_FontID                        FFFFFFEC         -20  args=1 r=1  (usage 3)
+txt_Height                        FFFFFFEA         -22  args=1 r=1  (usage 6)
+txt_Width                         FFFFFFEB         -21  args=1 r=1  (usage 6)
+txt_Ygap                          FFFFFFE8         -24  args=1 r=1  (usage 6)
+
+[USER FUNCTIONS]
+listbox                           0000015F  args=6 r=0  (usage 3)
+printitems                        000003B1  args=0 r=0  (usage 9)
+
+[GLOBAL VARIABLES]
+itemcnt                             1102  word       (usage 18)
+itemmaxh                            1103  word       (usage 24)
+itempos                             1001  word[100]   (usage 12)
+items                                  1  word[1000]   (usage 6)
+itemsel                             1101  word       (usage 12)
+itemsw                              1104  word       (usage 9)
+postop                              1105  word       (usage 24)
+vpleft                              1107  word       (usage 15)
+vpright                             1108  word       (usage 15)
+vptop                               1106  word       (usage 18)
+
+[PRIVATE VARIABLES]
+
+[DATA]
+0007: 54 6F 75 63 68 20 65 6E 74 72 79 20 74 6F 20 73     Touch entry to s
+0017: 65 6C 65 63 74 0A 53 77 69 70 65 20 75 70 20 61     elect.Swipe up a
+0027: 6E 64 20 64 6F 77 6E 20 74 6F 20 6D 6F 76 65 0A     nd down to move.
+0037: 54 6F 75 63 68 20 6F 75 74 73 69 64 65 20 62 6F     Touch outside bo
+0047: 78 20 74 6F 20 65 78 69 74 00 30 20 72 65 64 2C     x to exit.0 red,
+0057: 31 20 62 6C 61 63 6B 2C 32 20 67 72 65 65 6E 2C     1 black,2 green,
+0067: 33 20 62 6C 75 65 2C 34 20 70 69 6E 6B 2C 35 20     3 blue,4 pink,5 
+0077: 74 75 72 71 6F 69 73 65 2C 36 20 67 72 65 79 2C     turqoise,6 grey,
+0087: 37 20 77 68 69 74 65 2C 38 20 79 65 6C 6C 6F 77     7 white,8 yellow
+0097: 2C 39 20 72 65 64 2C 31 30 20 6C 69 6D 65 00 59     ,9 red,10 lime.Y
+00A7: 6F 75 20 64 69 64 6E 27 74 20 73 65 6C 65 63 74     ou didn't select
+00B7: 20 61 6E 79 74 68 69 6E 67 00 59 6F 75 20 53 65      anything.You Se
+00C7: 6C 65 63 74 65 64 20 69 74 65 6D 20 00 20 20 20     lected item .   
+00D7: 20 20 20 20 00 2C 00 25 73 0A 00                        .,.%s..
+
+[__MAXPROG]
+32750
+[__MAXMEM]
+32768
+
+[PROGRAM]
+main
+[CODESIZE]
+1156
+[MEMSIZE]
+1108
+[ARGCOUNT]
+0
+[RETURNS]
+NO
+[STACKSIZE]
+0 (AUTO)
+[STACK_ESTIMATE]
+42   (nb:- worst case estimate)
+[MODE]
+0
+
+[PROJECT]
+F:\_diablo16\_App note\4D-AN-00xxx_R_1_0\listbox\Listbox.4dg
+C:\Program Files (x86)\4D Labs\4D Workshop 4 IDE\include\uLCD-35DT.fnc
+C:\Program Files (x86)\4D Labs\4D Workshop 4 IDE\include\Diablo16_Functions.fnc
+C:\Program Files (x86)\4D Labs\4D Workshop 4 IDE\include\4DGL_16bitColours.fnc
