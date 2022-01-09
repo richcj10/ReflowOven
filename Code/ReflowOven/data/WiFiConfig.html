@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html>
+<title>Reflow Web Portal</title>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class= "MainDiv">
+    <h2> Reflow Oven 2000 - WiFi Config</h2>
+    <fieldset>
+        <legend>WiFi Config:</legend>
+        <form>
+            <p>
+                <label for="a">WiFi:</label>
+                <input id="SSID" type="text">
+            </p>
+            <p>
+                <label for="b">Password:</label>
+                <input id="WiFiPswd" type="text">
+            </p>
+            </form>
+        <button class="button" id="WiFiSave">Save</button>
+        <button onclick="location.href='./index.html'" class="button buttonsmall">Main Page</button>
+      </fieldset>
+  </div>
+</body>
+<script src="jscontrols.js"></script>
+<script>
+    window.onload = function() {
+        initWebSocket();
+    };
+    var reflowsave = document.getElementById('WiFiSave');
+    reflowsave.addEventListener('click',function(){
+        console.log("Save Wifi Info")
+        WiFiSendInfo();
+    });
+</script>
+</html>

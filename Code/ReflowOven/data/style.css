@@ -1,0 +1,71 @@
+/***
+   Rui Santos
+   Complete project details at https://RandomNerdTutorials.com
+***/
+
+html {
+  font-family: Arial;
+  display: inline-block;
+  margin: 0px auto;
+  text-align: center;
+}
+h1 {
+  color: #0F3376;
+  padding: 2vh;
+}
+p {
+  font-size: 1.5rem;
+}
+.button {
+  display: block;
+  background-color: #008CBA;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  padding: 16px 40px;
+  text-decoration: none;
+  font-size: 20px;
+  margin: 10px;
+  cursor: pointer;
+  width: 200px;
+}
+
+.button:hover {
+  background-color: #4CAF50; /* Green */
+  color: white;
+}
+
+.button2 {
+  background-color: #f44336;
+}
+
+.buttonsmall {
+  font-size: 10px;
+  width: 100px;
+}
+.units {
+  font-size: 1.2rem;
+ }
+.sensor-labels {
+  font-size: 1.5rem;
+  vertical-align:middle;
+  padding-bottom: 15px;
+}
+.MainDiv {
+  border: 2px solid black;
+  margin:0 auto;
+  border-radius: 5px;
+  padding: 20px;
+  height: 500px;
+  width: 1000px;
+}
+
+.ReflowDiv{
+  height: 700px;
+}
+.SwDiv{
+  border: 2px solid black;
+  border-radius: 5px;
+  float: left;
+  padding: 20px;
+}

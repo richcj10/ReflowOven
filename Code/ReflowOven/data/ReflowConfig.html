@@ -1,0 +1,89 @@
+<!DOCTYPE HTML>
+<html>
+<title>Reflow Web Portal</title>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+  <div class= "MainDiv ReflowDiv">
+    <h2> Reflow Oven 2000 - Reflow Setup</h2>
+    <div class= "SwDiv">
+      <fieldset>
+        <legend>Reflow Profile:</legend>
+        <select name="combo" id="comboProfile"></select>
+        <form>
+        <p>
+            <label for="a">Preheat Temp:</label>
+            <input id="preheatTemp" type="text">
+        </p>
+        <p>
+            <label for="b">Preheat Ramp:</label>
+            <input id="preheatRamp" type="text">
+        </p>
+        <p>
+            <label for="c">Preheat Dwel:</label>
+            <input id="preheatDwel" type="text">
+        </p>
+        <p>
+            <label for="d">Flow Temp:</label>
+            <input id="flowTemp" type="text">
+        </p>
+        <p>
+            <label for="e">Flow Ramp:</label>
+            <input id="flowRamp" type="text">
+        </p>
+        <p>
+            <label for="f">Flow Dwel:</label>
+            <input id="flowDwel" type="text">
+        </p>
+        <p>
+            <label for="g">Cool Rate:</label>
+            <input id="coolRamp" type="text">
+        </p>
+        </form>
+        <button class="button" id="ReFlSave">Save</button>
+        <button onclick="location.href='./index.html'" class="button buttonsmall">Main Page</button>
+      </fieldset>
+    </div>
+    <div id="chart-temperature" class="container"></div>
+  </div>
+  <script src="jscontrols.js"></script>
+</body>
+<script>
+    window.onload = function() {
+        LoadCBProfile();
+        SetRelowGraph();
+        initWebSocket();
+    };
+    var select = document.getElementById('comboProfile');
+    var reflowsave = document.getElementById('ReFlSave');
+    select.addEventListener('change',function(){
+      console.log("Here")
+      // ReflowChart.series[0].update({
+      //     data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+      //   }, false);
+      //   ReflowChart.redraw();
+    });
+    reflowsave.addEventListener('click',function(){
+      PreheatTemp = document.getElementById('preheatTemp').value;
+      PreheatRamp = document.getElementById('preheatRamp').value;
+      PreheatDwel = document.getElementById('preheatDwel').value;
+      FlowTemp = document.getElementById('flowTemp').value;
+      FlowDwel = document.getElementById('flowDwel').value;
+      FlowRamp = document.getElementById('flowRamp').value;
+      CoolRamp = document.getElementById('coolRamp').value;
+      console.log("Hi")
+      const newtemp = new Array(0, parseInt(PreheatTemp), parseInt(PreheatTemp),parseInt(FlowTemp),parseInt(FlowTemp),0);
+      ReflowChart.series[0].update({
+          data: newtemp
+        }, false);
+
+      ReflowChart.redraw();
+      ReflowSendInfo();
+    });
+</script>
+</html>

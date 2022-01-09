@@ -3,6 +3,7 @@
 #include <SparkFun_MCP9600.h>
 #include "Temperature.h"
 
+int TempMode = 0;
 MCP9600 tempSensor;
 uint8_t risingAlert = 1; //What alert to use for detecting cold -> hot transitions.
 uint8_t fallingAlert = 3; //What alert to use for detecting hot -> cold transitions.
@@ -13,7 +14,7 @@ float alertTemp = 29.5;  //What temperature to trigger the alert at (before hyst
                         //you have colder/warmer hands or if the ambient temperature is different.
 uint8_t hysteresis = 2; //How much hysteresis to have, in degrees Celcius. Feel free to adjust this, but 2°C seems to be about right.
 
-void TempSetup(){
+int TempSetup(){
     Wire.begin();
     Wire.setClock(100000);
     tempSensor.begin();       // Uses the default address (0x60) for SparkFun Thermocouple Amplifier
@@ -25,7 +26,9 @@ void TempSetup(){
   }
   else {
     Serial.println("Device did not acknowledge! Freezing.");
-    while(1); //hang forever
+    //while(1); //hang forever
+    TempMode = -1;
+    return 0;
   }
 
   //check if the Device ID is correct
@@ -34,11 +37,17 @@ void TempSetup(){
   }
   else {
     Serial.println("Device ID is not correct! Freezing.");
-    while(1); //hang forever
+    //while(1); //hang forever
+    TempMode = -2;
+    return 0;
   }
+  return 1;
 }
 
+int randomNumber = 0;
+
 float TempRead(){
+  if(TempMode > 0){
     Serial.print("Thermocouple: ");
     Serial.print(tempSensor.getThermocoupleTemp());
     Serial.print(" °C   Ambient: ");
@@ -49,4 +58,9 @@ float TempRead(){
 
     Serial.println(); 
     return 0;
+  }
+  else{
+    randomNumber = randomNumber + 1;
+    return randomNumber;
+  }
 }

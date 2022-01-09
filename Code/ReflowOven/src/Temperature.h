@@ -1,7 +1,7 @@
 #ifndef TEMPERATURE_H
 #define  TEMPERATURE_H
 
-void TempSetup();
+int TempSetup();
 float TempRead();
 
 #endif
