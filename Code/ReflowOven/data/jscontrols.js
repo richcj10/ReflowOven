@@ -2,7 +2,7 @@
 var gateway = `ws://${window.location.hostname}/ws`;
 var websocket;
 
-var Profiles = ['Solder Paste 1', 'Solder Paste 2', 'Preheat']
+var Profiles = ['Solder Paste 1', 'Solder Paste 2', 'Preheat','new']
 
 
 var ReflowChart = null;
@@ -100,10 +100,11 @@ function onMessage(event) {
 function WiFiSendInfo(){
     var ssid = document.getElementById('SSID').value
     var pswd = document.getElementById('WiFiPswd').value
-    websocket.send(JSON.stringify({'WiFiSSID':ssid,'WiFiPSWD':pswd}));
+    websocket.send(JSON.stringify({'TYP':1,'WiFiSSID':ssid,'WiFiPSWD':pswd}));
 }
 
 function ReflowSendInfo(){
+    ProfileName = document.getElementById('ProfileName').value;
     PreheatTemp = document.getElementById('preheatTemp').value;
     PreheatRamp = document.getElementById('preheatRamp').value;
     PreheatDwel = document.getElementById('preheatDwel').value;
@@ -111,5 +112,5 @@ function ReflowSendInfo(){
     FlowDwel = document.getElementById('flowDwel').value;
     FlowRamp = document.getElementById('flowRamp').value;
     CoolRamp = document.getElementById('coolRamp').value;
-    websocket.send(JSON.stringify({'PHT':PreheatTemp,'PHR':PreheatRamp,'PHR':PreheatDwel,'FLT':FlowTemp,'FLD':FlowDwel,'FLR':FlowRamp,'CDR':CoolRamp}));
+    websocket.send(JSON.stringify({'TYP':2,'PHT':PreheatTemp,'PHR':PreheatRamp,'PHR':PreheatDwel,'FLT':FlowTemp,'FLD':FlowDwel,'FLR':FlowRamp,'CDR':CoolRamp}));
 }

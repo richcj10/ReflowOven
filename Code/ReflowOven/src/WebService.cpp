@@ -5,6 +5,7 @@
 #include "ArduinoJson.h"
 #include <LittleFS.h>
 #include "Temperature.h"
+#include "Profiles.h"
 
 // Create AsyncWebServer object on port 80
 AsyncWebServer server(80);
@@ -22,26 +23,31 @@ String processor(const String& var);
 String getTemperatureHTML();
 
 void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
-    AwsFrameInfo *info = (AwsFrameInfo*)arg;
-    if (info->final && info->index == 0 && info->len == len && info->opcode == WS_TEXT) {
-
-        const uint8_t size = JSON_OBJECT_SIZE(1);
-        StaticJsonDocument<200> json;
-        DeserializationError err = deserializeJson(json, data);
-        if (err) {
-            Serial.print(F("deserializeJson() failed with code "));
-            Serial.println(err.c_str());
-            return;
-        }
-        serializeJsonPretty(json, Serial);
-
-        // const char *action = json["action"];
-        // if (strcmp(action, "toggle") == 0) {
-        //     led.on = !led.on;
-        //     notifyClients();
-        // }
+  AwsFrameInfo *info = (AwsFrameInfo*)arg;
+  if (info->final && info->index == 0 && info->len == len && info->opcode == WS_TEXT) {
+    //const uint8_t size = JSON_OBJECT_SIZE(1);
+    StaticJsonDocument<200> json;
+    DeserializationError err = deserializeJson(json, data);
+    if (err) {
+      //Serial.print(F("deserializeJson() failed with code "));
+      Serial.println(err.c_str());
+      return;
+    }
+    //serializeJsonPretty(json, Serial);
+    char Type = json["TYP"];
+    if(Type == 1){ //WiFi Json Array Recived 
+      //Serial.println("Type WiFi");
+      const char* WiFiSSID = json["WiFiSSID"];
+      const char* WiFiPSWD = json["WiFiPSWD"];
+      Serial.println(WiFiSSID);
+      Serial.println(WiFiPSWD);
+      saveConfig(String(WiFiSSID),String(WiFiPSWD));
+    }
+    if(Type == 2){ //Reflow Json Array Recived 
+      //Serial.println("Type Reflow Profile"); 
 
     }
+  }
 }
 
 void onEvent(AsyncWebSocket       *server,

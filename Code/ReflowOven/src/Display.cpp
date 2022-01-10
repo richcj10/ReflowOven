@@ -3,9 +3,7 @@
 
 Genie genie;
 #define RESETLINE 4  // Change this if you are not using an Arduino Adaptor Shield Version 2 (see code below)
-void DisplaySetup()
-{
-  Serial.begin(115200);  // Serial0 @ 200000 (200K) Baud
+void DisplaySetup(){
   genie.Begin(Serial);   // Use Serial0 for talking to the Genie Library, and to the 4D Systems display
 
   genie.AttachEventHandler(myGenieEventHandler); // Attach the user function Event Handler for processing events

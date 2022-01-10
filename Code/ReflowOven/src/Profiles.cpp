@@ -17,7 +17,7 @@ void ProfileSetup(){
   }
   listDir("/");
 
-  saveConfig("Lights.Camera.Action", "RR58fa!8");
+  //saveConfig("Lights.Camera.Action", "RR58fa!8");
 
   if(loadWiFiConfig()){
       Serial.println("Wifi Config Found");
