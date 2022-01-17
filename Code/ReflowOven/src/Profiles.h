@@ -9,5 +9,6 @@ bool saveConfig(String SSID, String Password);
 String GetSSID();
 String GetSSIDPassword();
 char WifiConfigStatus();
+void LoadProfile();
 
 #endif

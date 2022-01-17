@@ -1,11 +1,14 @@
 #include "Profiles.h"
 #include <LittleFS.h>
 #include "ArduinoJson.h"
+#include "Define.h"
 
 String WiFiSSID;
 String WifiPassword;
 
-char Config = 1;
+char WiFiConfig = 1;
+char WiFiConfig = 1;
+String fString[MAXPROFILECOUNT];    // This is a REAL array of Strings
 
 bool loadWiFiConfig();
 
@@ -23,22 +26,49 @@ void ProfileSetup(){
       Serial.println("Wifi Config Found");
   }
   else{
-      Config = 0;
+      WiFiConfig = 0;
   }
-  ///writeFile("/hello.txt", "Hello ");
-  //listDir("/");
+  LoadProfile();
 }
 
-// var PreheatTemp = 0;
-// var PreheatRamp = 0;
-// var PreheatDwel = 0;
-// var FlowTemp = 0;
-// var FlowDwel = 0;
-// var FlowRamp = 0;
-// var CoolRamp = 0;
 
-void SaveProfile(String Name, float PreheatTemp, float PreheatRamp, float PreheatDwel, float FlowTemp, float FlowDwel, float FlowRamp, float CoolRamp){
+void SaveProfile(String Name, float PreheatTemp, float PreheatRamp, float PreheatDwel, float FlowTemp, float FlowDwel, float FlowRamp, float CoolRamp, float CoolOff){
 
+}
+
+void LoadProfile(){
+  Serial.print(F("Open Profile "));
+  File file = LittleFS.open("/Profiles.json", "r");
+  if (!file){
+    Serial.print(F("Open file failed: "));
+    return;
+  }
+
+  StaticJsonDocument<2000> doc;
+
+  DeserializationError error = deserializeJson(doc, file);
+
+  if (error)
+  {
+    Serial.print(F("deserializeJson() failed: "));
+    Serial.println(error.f_str());
+    return;
+  }
+  int Count = doc["profilecount"];
+  Serial.print("Profile Count = ");
+  Serial.println(Count);
+  for (JsonObject module : doc["profile"].as<JsonArray>())
+  {
+    int srno = module["profileID"];
+    Serial.print("Numb = ");
+    Serial.println(srno);
+    Serial.print("Name = ");
+    Serial.println(module["profileName"].as<String>());
+    //configmod[srno].modulesrno = srno;
+    //configmod[srno].moduleID = module["moduleID"].as<String>();
+    //configmod[srno].moduletype = module["moduletype"].as<String>();
+    //configmod[srno].moduleNRFID = module["moduleNRFID"].as<String>();
+  }
 }
 
 void writeFile(const char * path, const char * message) {
@@ -139,5 +169,5 @@ String GetSSIDPassword(){
 }
 
 char WifiConfigStatus(){
-    return Config;
+    return WiFiConfig;
 }

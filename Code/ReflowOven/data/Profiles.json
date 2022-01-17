@@ -1,0 +1,41 @@
+{
+    "profilecount": 3,
+    "profile": [
+      {
+        "profileID": 0,
+        "profileName": "Leaded Process",
+        "PreheatTemp": 120,
+        "PreheatRamp": 20,
+        "PreheatDwel": 30,
+        "FlowTemp": 220,
+        "FlowDwel": 30,
+        "FlowRamp": 50,
+        "CoolRamp": 20,
+        "CoolStop": 30
+      },
+      {
+        "profileID": 1,
+        "profileName": "LeadFree Process",
+        "PreheatTemp": 120,
+        "PreheatRamp": 20,
+        "PreheatDwel": 30,
+        "FlowTemp": 250,
+        "FlowDwel": 30,
+        "FlowRamp": 50,
+        "CoolRamp": 20,
+        "CoolStop": 30
+      },
+      {
+        "profileID": 2,
+        "profileName": "Preheat Process",
+        "PreheatTemp": 120,
+        "PreheatRamp": 20,
+        "PreheatDwel": 30,
+        "FlowTemp": 120,
+        "FlowDwel": 1,
+        "FlowRamp": 50,
+        "CoolRamp": 120,
+        "CoolStop": 120
+      }
+    ]
+}
