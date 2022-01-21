@@ -1,0 +1,23 @@
+#ifndef DEFINE_H
+#define  DEFINE_H
+
+#define TIMER_INTERRUPT_DEBUG 0
+#define _TIMERINTERRUPT_LOGLEVEL_  0
+
+#define OVENCONTROLLOOP 1000
+#define UXCONTROLLOOP 250
+#define TIMER_INTERVAL_MS 250
+#define DELTA 5
+#define MAXPROFILECOUNT 10
+#define NAMELENTH 40
+
+#define PREHEATTMP 0
+#define PREHEATRMP 1
+#define PREHEATDWL 2
+#define FLWTMP 3
+#define FLWDWL 4
+#define FLWRMP 5
+#define COOLRMP 6
+#define COOLSTOP 7
+
+#endif

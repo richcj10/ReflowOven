@@ -1,4 +1,5 @@
 #include "Profiles.h"
+#include "ReflowControl.h"
 #include <LittleFS.h>
 #include "ArduinoJson.h"
 #include "Define.h"
@@ -7,8 +8,8 @@ String WiFiSSID;
 String WifiPassword;
 
 char WiFiConfig = 1;
-char WiFiConfig = 1;
-String fString[MAXPROFILECOUNT];    // This is a REAL array of Strings
+char ReflowProfile = 0;
+char ProfileNames[MAXPROFILECOUNT][NAMELENTH]; 
 
 bool loadWiFiConfig();
 
@@ -20,8 +21,8 @@ void ProfileSetup(){
   }
   listDir("/");
 
-  //saveConfig("Lights.Camera.Action", "RR58fa!8");
-
+  saveConfig("Lights.Camera.Action", "RR58fa!8");
+  //strcpy(ProfileNames[0], "New");
   if(loadWiFiConfig()){
       Serial.println("Wifi Config Found");
   }
@@ -55,19 +56,27 @@ void LoadProfile(){
     return;
   }
   int Count = doc["profilecount"];
-  Serial.print("Profile Count = ");
-  Serial.println(Count);
+  //Serial.print("Profile Count = ");
+  //Serial.println(Count);
   for (JsonObject module : doc["profile"].as<JsonArray>())
   {
-    int srno = module["profileID"];
-    Serial.print("Numb = ");
-    Serial.println(srno);
-    Serial.print("Name = ");
-    Serial.println(module["profileName"].as<String>());
-    //configmod[srno].modulesrno = srno;
-    //configmod[srno].moduleID = module["moduleID"].as<String>();
-    //configmod[srno].moduletype = module["moduletype"].as<String>();
-    //configmod[srno].moduleNRFID = module["moduleNRFID"].as<String>();
+    const char* Name = module["profileName"];//.as<String>();
+    strcpy(ProfileNames[ReflowProfile], Name);
+    //Serial.println(Name);
+    ReflowProfile += 1;
+  }
+  char value = 0;
+  for(char i = 0;i<ReflowProfile;i++){
+    for(char k = 0;k<NAMELENTH;k++){
+      value = ProfileNames[i][k];
+      if(value != NULL){
+        Serial.print(value);
+      }
+      else{
+        break;
+      }
+    }
+    Serial.println();
   }
 }
 
@@ -160,6 +169,46 @@ bool saveConfig(String SSID, String Password){
   return true;
 }
 
+void LoadProfileData(char ProfileNumber){
+  int Value = 0;
+  Serial.print(F("Open Profile "));
+  File file = LittleFS.open("/Profiles.json", "r");
+  if (!file){
+    Serial.print(F("Open file failed: "));
+    return;
+  }
+
+  StaticJsonDocument<2000> doc;
+
+  DeserializationError error = deserializeJson(doc, file);
+
+  if (error)
+  {
+    Serial.print(F("deserializeJson() failed: "));
+    Serial.println(error.f_str());
+    return;
+  }
+  //Serial.print("Profile = ");
+  //Serial.println(int(ProfileNumber));
+  JsonArray array = doc["profile"].as<JsonArray>();
+  Value = int(array[ProfileNumber]["PreheatTemp"]);
+  SetProfileValue(PREHEATTMP,Value);
+  Value = int(array[ProfileNumber]["PreheatRamp"]);
+  SetProfileValue(PREHEATRMP,Value);
+  Value = int(array[ProfileNumber]["PreheatDwel"]);
+  SetProfileValue(PREHEATDWL,Value);
+  Value = int(array[ProfileNumber]["FlowTemp"]);
+  SetProfileValue(FLWTMP,Value);
+  Value = int(array[ProfileNumber]["FlowDwel"]);
+  SetProfileValue(FLWDWL,Value);
+  Value = int(array[ProfileNumber]["FlowRamp"]);
+  SetProfileValue(FLWRMP,Value);
+  Value = int(array[ProfileNumber]["CoolRamp"]);
+  SetProfileValue(COOLRMP,Value);
+  Value = int(array[ProfileNumber]["CoolStop"]);
+  SetProfileValue(COOLSTOP,Value);
+}
+
 String GetSSID(){
     return WiFiSSID;
 }
@@ -170,4 +219,25 @@ String GetSSIDPassword(){
 
 char WifiConfigStatus(){
     return WiFiConfig;
+}
+
+
+String GetProfileNames(){
+  char value = 0;
+  String StringValue = "{";
+  for(char i = 0;i<ReflowProfile;i++){
+    for(char k = 0;k<NAMELENTH;k++){
+      value = ProfileNames[i][k];
+      if(value != NULL){
+        StringValue += String(value);
+      }
+      else{
+        break;
+      }
+    }
+    StringValue += ",";
+  }
+  StringValue += "}";
+  Serial.println(StringValue);
+  return StringValue;
 }

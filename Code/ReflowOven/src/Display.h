@@ -2,7 +2,7 @@
 #define  DISPLAY_H
 
 void DisplaySetup();
-void DislayLoop();
+void DisplayUpdate();
 void myGenieEventHandler(void);
 
 #endif

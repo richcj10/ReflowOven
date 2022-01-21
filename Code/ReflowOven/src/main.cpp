@@ -1,10 +1,13 @@
 #include <Arduino.h>
+#include "Define.h"
+#include "Version.h"
 #include <ESP8266WiFi.h>
 #include "Temperature.h"
 #include "Profiles.h"
 #include "Display.h"
 #include "WebService.h"
 #include "Debug.h"
+#include "ReflowControl.h"
 
 // Replace with your network credentials
 const char* ssid = "Lights.Camera.Action";
@@ -15,9 +18,11 @@ char WiFiTimeout = 0;
 
 void setup() {
   // put your setup code here, to run once:
+  pinMode(5,OUTPUT);
   DebugSetup(0);
   Serial.begin(115200);
-  //Serial1.println("Boot");
+  //DisplaySetup();
+  Serial1.println("Boot");
   TempSetup();
   ProfileSetup();
   if(WifiConfigStatus() == 0){
@@ -46,20 +51,37 @@ void setup() {
   Serial.println(WiFi.localIP());
   WebserviceBegin();
   //Serial.println("Weppage Started!");
+  Serial.println("Project version: " + String(VERSION));
+  Serial.println("Build timestamp:" + String(BUILD_TIMESTAMP));
+  LoadProfileData(1);
+  GetProfileNames();
 }
 
-unsigned long Time = millis();
-int updateTime = 1000;
+
+unsigned long ReflowTime = millis();
+unsigned long UxTime = millis();
+
+char OvenState = 0;
 
 void loop() {
-  if((Time + updateTime) < millis()){ //update every 20ms without blocking!
+  if((ReflowTime + OVENCONTROLLOOP) < millis()){ //update every 20ms without blocking!
     //TempRead();
-    Time = millis();
-    //Serial.print("Free Heap: ");
-    //Serial.println(ESP.getFreeHeap());
-    //Serial.println("ReadTemp");
-    //PIDLoop(float CurrentTemp, float SetTemp);
+    ReflowTime = millis();
+    if(OvenState == 1){
+      RunProfile(1);
+    }
+    if(OvenState == 0){
+      ReflowStop();
+    }
   }
+  if((UxTime + UXCONTROLLOOP) < millis()){ //update every 20ms without blocking!
+    UxTime = millis();
+    //DisplayUpdate();
+  }
+  delay(1000);
+  digitalWrite(5,1);
+  delay(1000);
+  digitalWrite(5,0);
 }
 
 

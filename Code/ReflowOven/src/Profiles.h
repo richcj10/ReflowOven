@@ -10,5 +10,7 @@ String GetSSID();
 String GetSSIDPassword();
 char WifiConfigStatus();
 void LoadProfile();
+void LoadProfileData(char ProfileNumber);
+String GetProfileNames();
 
 #endif

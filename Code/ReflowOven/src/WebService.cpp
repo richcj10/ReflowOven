@@ -47,6 +47,10 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
       //Serial.println("Type Reflow Profile"); 
 
     }
+    if(Type == 3){ //Send Reflow Profile Names 
+      //Serial.println("Type Reflow Profile"); 
+
+    }
   }
 }
 
@@ -99,6 +103,10 @@ void WebserviceBegin(){
 
   server.on("/temperature", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send_P(200, "text/plain", String(TempRead()).c_str());
+  });
+
+  server.on("/profileNames", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send_P(200, "text/plain", String(GetProfileNames()).c_str());
   });
 
   server.onNotFound([](AsyncWebServerRequest *request){

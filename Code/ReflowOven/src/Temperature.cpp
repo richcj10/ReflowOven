@@ -23,6 +23,7 @@ int TempSetup(){
   //check if the sensor is connected
   if(tempSensor.isConnected()){
     Serial.println("Device will acknowledge!");
+    TempMode = 1;
   }
   else {
     //Serial.println("Device did not acknowledge! Freezing.");
@@ -33,7 +34,8 @@ int TempSetup(){
 
   //check if the Device ID is correct
   if(tempSensor.checkDeviceID()){
-    Serial.println("Device ID is correct!");        
+    Serial.println("Device ID is correct!");     
+    TempMode = 2;   
   }
   else {
     //Serial.println("Device ID is not correct! Freezing.");
@@ -49,15 +51,15 @@ int randomNumber = 0;
 float TempRead(){
   if(TempMode > 0){
     //Serial.print("Thermocouple: ");
-    //Serial.print(tempSensor.getThermocoupleTemp());
+    //Serial.println(tempSensor.getThermocoupleTemp());
     //Serial.print(" °C   Ambient: ");
-    //Serial.print(tempSensor.getAmbientTemp());
+    //Serial.println(tempSensor.getAmbientTemp());
     //Serial.print(" °C   Temperature Delta: ");
     //Serial.print(tempSensor.getTempDelta());
     //Serial.print(" °C");
 
     //Serial.println(); 
-    return 0;
+    return tempSensor.getThermocoupleTemp();
   }
   else{
     randomNumber = randomNumber + 1;
