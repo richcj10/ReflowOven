@@ -33,8 +33,13 @@
     };
     var reflowsave = document.getElementById('WiFiSave');
     reflowsave.addEventListener('click',function(){
-        console.log("Save Wifi Info")
-        WiFiSendInfo();
+        if(GetConnectionStat()){
+            console.log("Save Wifi Info");
+            WiFiSendInfo();
+        }
+        else{
+            alert("No Comunication with Server");
+        }
     });
 </script>
 </html>

@@ -25,6 +25,7 @@ function SetRelowGraph(){
     FlowDwel = 5;
     FlowRamp = 7;
     CoolRamp = 8;
+    document.getElementById('ProfileName').value = Profiles[0];
     document.getElementById('preheatTemp').value = PreheatTemp;
     document.getElementById('preheatRamp').value = PreheatRamp;
     document.getElementById('preheatDwel').value = PreheatDwel;
@@ -32,7 +33,7 @@ function SetRelowGraph(){
     document.getElementById('flowDwel').value= FlowDwel;
     document.getElementById('flowRamp').value = FlowRamp;
     document.getElementById('coolRamp').value = CoolRamp;
-    const newtemp = new Array(0, parseInt(PreheatTemp), parseInt(PreheatTemp),parseInt(FlowTemp),parseInt(FlowTemp),0);
+    var newtemp = new Array(0, parseInt(PreheatTemp), parseInt(PreheatTemp),parseInt(FlowTemp),parseInt(FlowTemp),0);
     ReflowChart = Highcharts.chart('chart-temperature', {
         title: {
             text: 'Reflow Profile'
@@ -51,7 +52,7 @@ function SetRelowGraph(){
         series: [{
           data: newtemp
         }]
-      });
+    });
 }
 
 function changePageTitle(mode,present) {
@@ -89,6 +90,7 @@ function initWebSocket() {
 function onOpen(event) {
     console.log('Connection opened');
     VersonInfo();
+    GetProfileInfo();
     Connected = 1;
 }
 
@@ -114,23 +116,15 @@ function onMessage(event) {
         else{
             window.setTimeout('alert("Oven Stoped");window.close();', 2500);
         }
+    }
+    if(thisSession.hasOwnProperty('RESP')){
+        if(data["RESP"] == 1){
+            window.setTimeout('alert("Oven Started");window.close();', 2500);
+        }
+        else{
+            window.setTimeout('alert("Oven Stoped");window.close();', 2500);
+        }
     }    
-}
-
-function VersonInfo(){
-    websocket.send(JSON.stringify({'TYP':4}));
-}
-
-const interval = setInterval(function() {
-    websocket.send(JSON.stringify({'TYP':3}));
-}, 2000);
-
-function Start(Profile){
-    websocket.send(JSON.stringify({'TYP':5,'Profile':Profile}));
-}
-
-function GetProfileInfo(Profile){
-    websocket.send(JSON.stringify({'TYP':2,'Profile':Profile}));
 }
 
 function WiFiSendInfo(){
@@ -138,6 +132,31 @@ function WiFiSendInfo(){
     var pswd = document.getElementById('WiFiPswd').value
     websocket.send(JSON.stringify({'TYP':1,'WiFiSSID':ssid,'WiFiPSWD':pswd}));
 }
+
+function GetProfileInfo(Profile){
+    websocket.send(JSON.stringify({'TYP':2,'Profile':Profile}));
+}
+
+const interval = setInterval(function() {
+    if(Connected){
+        websocket.send(JSON.stringify({'TYP':3}));
+    }
+}, 2000);
+
+function VersonInfo(){
+    websocket.send(JSON.stringify({'TYP':4}));
+}
+
+function Start(Profile){
+    websocket.send(JSON.stringify({'TYP':5,'Profile':Profile}));
+}
+
+
+function GetProfileNames(){
+    websocket.send(JSON.stringify({'TYP':6}));
+}
+
+
 
 function ReflowSendInfo(){
     ProfileName = document.getElementById('ProfileName').value;
@@ -148,7 +167,7 @@ function ReflowSendInfo(){
     FlowDwel = document.getElementById('flowDwel').value;
     FlowRamp = document.getElementById('flowRamp').value;
     CoolRamp = document.getElementById('coolRamp').value;
-    websocket.send(JSON.stringify({'TYP':2,'PHT':PreheatTemp,'PHR':PreheatRamp,'PHR':PreheatDwel,'FLT':FlowTemp,'FLD':FlowDwel,'FLR':FlowRamp,'CDR':CoolRamp}));
+    websocket.send(JSON.stringify({'TYP':2,'PNM':ProfileName,'PHT':PreheatTemp,'PHR':PreheatRamp,'PHR':PreheatDwel,'FLT':FlowTemp,'FLD':FlowDwel,'FLR':FlowRamp,'CDR':CoolRamp}));
 }
 
 function GetTemp(){

@@ -20,9 +20,9 @@
         <button onclick="location.href='./WiFiConfig.html'" class="button">WiFi Config</button>
         <button class="button">Extra</button>
       </fieldset>
-    </div>
-    <div class= "SwDiv">
-      <p>Verson: </p> <p id="ver">0:0:0</p>
+      <div>
+        <a class = "NextTo" href="https://github.com/richcj10/ReflowOven">Verson</a> <p id ="ver" ><small>0:0:0</small></p>
+      </div>
     </div>
       <div id="chart-temperature" class="container"></div>
     </div>
@@ -66,7 +66,7 @@
     LoadCBProfile();
     document.getElementById("ver").innerHTML = GetVerson();
     setInterval(function ( ) {
-      var x = (new Date()).getTime(),
+      var x =  Date().getTime();
       var y = GetTemp();
       if(chartT.series[0].data.length > 40) {
         chartT.series[0].addPoint([x, y], true, true, true);

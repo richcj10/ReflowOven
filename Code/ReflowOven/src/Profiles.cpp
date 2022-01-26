@@ -224,7 +224,7 @@ char WifiConfigStatus(){
 
 String GetProfileNames(){
   char value = 0;
-  String StringValue = "{";
+  String StringValue = "{PName:";
   for(char i = 0;i<ReflowProfile;i++){
     for(char k = 0;k<NAMELENTH;k++){
       value = ProfileNames[i][k];
@@ -237,7 +237,7 @@ String GetProfileNames(){
     }
     StringValue += ",";
   }
-  StringValue += "}";
+  StringValue += "New}";
   Serial.println(StringValue);
   return StringValue;
 }

@@ -17,9 +17,9 @@
         <select name="combo" id="comboProfile"></select>
         <form>
           <p>
-            <label for="aName">Preheat Temp:</label>
+            <label for="aName">Name:</label>
             <input id="ProfileName" type="text">
-        </p>
+          </p>
         <p>
             <label for="a">Preheat Temp:</label>
             <input id="preheatTemp" type="text">
@@ -58,19 +58,23 @@
   <script src="jscontrols.js"></script>
 </body>
 <script>
+    
     window.onload = function() {
-        LoadCBProfile();
-        SetRelowGraph();
         initWebSocket();
     };
     var select = document.getElementById('comboProfile');
     var reflowsave = document.getElementById('ReFlSave');
     select.addEventListener('change',function(){
-      console.log("Here")
-      // ReflowChart.series[0].update({
-      //     data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-      //   }, false);
-      //   ReflowChart.redraw();
+      console.log("Get Profile");
+      console.log(select.value);
+      document.getElementById('ProfileName').value = select.value;
+      if(GetConnectionStat()){
+        console.log("Get Profile");
+        GetProfileInfo(select.value);
+      }
+      else{
+        alert("No Comunication with Server");
+      }
     });
     reflowsave.addEventListener('click',function(){
       PreheatTemp = document.getElementById('preheatTemp').value;
@@ -80,14 +84,19 @@
       FlowDwel = document.getElementById('flowDwel').value;
       FlowRamp = document.getElementById('flowRamp').value;
       CoolRamp = document.getElementById('coolRamp').value;
-      console.log("Hi")
       const newtemp = new Array(0, parseInt(PreheatTemp), parseInt(PreheatTemp),parseInt(FlowTemp),parseInt(FlowTemp),0);
       ReflowChart.series[0].update({
           data: newtemp
         }, false);
 
       ReflowChart.redraw();
-      ReflowSendInfo();
+      if(GetConnectionStat()){
+        console.log("Save Profile");
+        ReflowSendInfo();
+      }
+      else{
+        alert("No Comunication with Server");
+      }
     });
 </script>
 </html>

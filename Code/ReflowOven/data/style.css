@@ -64,8 +64,14 @@ p {
   height: 700px;
 }
 .SwDiv{
-  border: 2px solid black;
-  border-radius: 5px;
+  /* border: 2px solid black;
+  border-radius: 5px; */
   float: left;
-  padding: 20px;
+  padding: 5px;
+}
+
+.NextTo{
+  float: left;
+  text-align: right;
+  padding: 0px;
 }

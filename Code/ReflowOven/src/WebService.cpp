@@ -53,19 +53,20 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
       Serial.print("Pro: "); 
       char ProfileNumber = json["Profile"];
       Serial.println(ProfileNumber); 
-      jsonDocTx.clear();
-      jsonDocTx["CNTTMP"] = TempRead();
+      //TODO: add parse code
+      //TODO: add code to pass args to update or add profile      
+      // jsonDocTx.clear();
 
-      serializeJson(jsonDocTx, output, 512);
+      // serializeJson(jsonDocTx, output, 512);
 
-      Serial.printf("Sending: %s", output);
-      if (ws.availableForWriteAll()) {
-        ws.textAll(output);
-        Serial.printf("WS Send Pro\r\n");
-      } 
-      else {
-        Serial.printf("...queue is full\r\n");
-      }
+      // Serial.printf("Sending: %s", output);
+      // if (ws.availableForWriteAll()) {
+      //   ws.textAll(output);
+      //   Serial.printf("WS Send Pro\r\n");
+      // } 
+      // else {
+      //   Serial.printf("...queue is full\r\n");
+      // }
     }
     if(Type == 3){ //Send Reflow Profile Names 
       Serial.println("Temp"); 
@@ -110,6 +111,17 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
       Serial.printf("Sending: %s", output);
       if (ws.availableForWriteAll()) {
         ws.textAll(output);
+        Serial.printf("WS Send Ver\r\n");
+      } 
+      else {
+        Serial.printf("...queue is full\r\n");
+      }
+    }
+    if(Type == 6){ //StartProfile
+      Serial.println("Profile Name"); 
+
+      if (ws.availableForWriteAll()) {
+        ws.textAll(GetProfileNames().c_str());
         Serial.printf("WS Send Ver\r\n");
       } 
       else {
@@ -168,10 +180,6 @@ void WebserviceBegin(){
 
   server.on("/temperature", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send_P(200, "text/plain", String(TempRead()).c_str());
-  });
-
-  server.on("/profileNames", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send_P(200, "text/plain", String(GetProfileNames()).c_str());
   });
 
   server.onNotFound([](AsyncWebServerRequest *request){
