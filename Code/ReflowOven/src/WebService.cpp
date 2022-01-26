@@ -6,11 +6,17 @@
 #include <LittleFS.h>
 #include "Temperature.h"
 #include "Profiles.h"
+#include "Version.h"
+
+StaticJsonDocument<200> jsonDocTx;
+static char output[512];
 
 // Create AsyncWebServer object on port 80
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
 const int ledPin = 5;
+
+char Status = 0;
 
 // Stores LED state
 String ledState;
@@ -44,12 +50,71 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
       saveConfig(String(WiFiSSID),String(WiFiPSWD));
     }
     if(Type == 2){ //Reflow Json Array Recived 
-      //Serial.println("Type Reflow Profile"); 
+      Serial.print("Pro: "); 
+      char ProfileNumber = json["Profile"];
+      Serial.println(ProfileNumber); 
+      jsonDocTx.clear();
+      jsonDocTx["CNTTMP"] = TempRead();
 
+      serializeJson(jsonDocTx, output, 512);
+
+      Serial.printf("Sending: %s", output);
+      if (ws.availableForWriteAll()) {
+        ws.textAll(output);
+        Serial.printf("WS Send Pro\r\n");
+      } 
+      else {
+        Serial.printf("...queue is full\r\n");
+      }
     }
     if(Type == 3){ //Send Reflow Profile Names 
-      //Serial.println("Type Reflow Profile"); 
+      Serial.println("Temp"); 
+      jsonDocTx.clear();
+      jsonDocTx["CNTTMP"] = TempRead();
 
+      serializeJson(jsonDocTx, output, 512);
+
+      Serial.printf("Sending: %s", output);
+      if (ws.availableForWriteAll()) {
+        ws.textAll(output);
+        Serial.printf("WS Send TMP\r\n");
+      } 
+      else {
+        Serial.printf("...queue is full\r\n");
+      }
+    }
+    if(Type == 4){ //Send Reflow Profile Names 
+      Serial.println("Type Verson"); 
+      jsonDocTx.clear();
+      jsonDocTx["VER"] = String(VERSION);
+
+      serializeJson(jsonDocTx, output, 512);
+
+      Serial.printf("Sending: %s", output);
+      if (ws.availableForWriteAll()) {
+        ws.textAll(output);
+        Serial.printf("WS Send Ver\r\n");
+      } 
+      else {
+        Serial.printf("...queue is full\r\n");
+      }
+    }
+    if(Type == 5){ //StartProfile
+      Status = !Status;
+      Serial.println("Start Profile"); 
+      jsonDocTx.clear();
+      jsonDocTx["RESP"] = Status;
+
+      serializeJson(jsonDocTx, output, 512);
+
+      Serial.printf("Sending: %s", output);
+      if (ws.availableForWriteAll()) {
+        ws.textAll(output);
+        Serial.printf("WS Send Ver\r\n");
+      } 
+      else {
+        Serial.printf("...queue is full\r\n");
+      }
     }
   }
 }
@@ -137,4 +202,8 @@ String processor(const String& var){
   else{
     return "NA";
   }
+}
+
+char GetWebpageStart(){
+  return Status;
 }

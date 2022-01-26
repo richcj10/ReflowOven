@@ -21,7 +21,10 @@
         <button class="button">Extra</button>
       </fieldset>
     </div>
-    <div id="chart-temperature" class="container"></div>
+    <div class= "SwDiv">
+      <p>Verson: </p> <p id="ver">0:0:0</p>
+    </div>
+      <div id="chart-temperature" class="container"></div>
     </div>
   </div>
 </body>
@@ -48,23 +51,6 @@
     },
     credits: { enabled: false }
   });
-  setInterval(function ( ) {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-      if (this.readyState == 4 && this.status == 200) {
-        var x = (new Date()).getTime(),
-            y = parseFloat(this.responseText);
-        //console.log(this.responseText);
-        if(chartT.series[0].data.length > 40) {
-          chartT.series[0].addPoint([x, y], true, true, true);
-        } else {
-          chartT.series[0].addPoint([x, y], true, false, true);
-        }
-      }
-    };
-    xhttp.open("GET", "/temperature", true);
-    xhttp.send();
-  }, 1000 ) ;
   var select = document.getElementById('comboProfile');
   select.addEventListener('change',function(){
     console.log("Here")
@@ -74,7 +60,20 @@
     //   ReflowChart.redraw();
   });
   window.onload = function() {
-    LoadCBProfile();
+    initWebSocket();
   };
+  if(GetConnectionStat()){
+    LoadCBProfile();
+    document.getElementById("ver").innerHTML = GetVerson();
+    setInterval(function ( ) {
+      var x = (new Date()).getTime(),
+      var y = GetTemp();
+      if(chartT.series[0].data.length > 40) {
+        chartT.series[0].addPoint([x, y], true, true, true);
+      } else {
+        chartT.series[0].addPoint([x, y], true, false, true);
+      }
+    }, 1000 ) ;
+  }
 </script>
 </html>

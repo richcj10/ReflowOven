@@ -58,8 +58,8 @@ void setup() {
   Serial.println(WiFi.localIP());
   WebserviceBegin();
   Serial.println("Weppage Started!");
-  // Serial.println("Project version: " + String(VERSION));
-  // Serial.println("Build timestamp:" + String(BUILD_TIMESTAMP));
+  Serial.println("Project version: " + String(VERSION));
+  Serial.println("Build timestamp:" + String(BUILD_TIMESTAMP));
   // //LoadProfileData(1);
   // //GetProfileNames();
   // Serial.println(WiFi.localIP());

@@ -13,6 +13,9 @@ var FlowTemp = 0;
 var FlowDwel = 0;
 var FlowRamp = 0;
 var CoolRamp = 0;
+var Verson = 0;
+var CurrentTemp = 0;
+var Connected = 0;
 
 function SetRelowGraph(){
     PreheatTemp = 125;
@@ -85,16 +88,49 @@ function initWebSocket() {
 
 function onOpen(event) {
     console.log('Connection opened');
+    VersonInfo();
+    Connected = 1;
 }
 
 function onClose(event) {
     console.log('Connection closed');
+    Connected = 0;
     setTimeout(initWebSocket, 2000);
 }
 
 function onMessage(event) {
     let data = JSON.parse(event.data);
-    document.getElementById('led').className = data.status;
+    console.log(data);
+    if(thisSession.hasOwnProperty('VER')){
+        Verson = data["VER"];
+    }
+    if(thisSession.hasOwnProperty('CNTTMP')){
+        CurrentTemp = data["CNTTMP"];
+    }
+    if(thisSession.hasOwnProperty('RESP')){
+        if(data["RESP"] == 1){
+            window.setTimeout('alert("Oven Started");window.close();', 2500);
+        }
+        else{
+            window.setTimeout('alert("Oven Stoped");window.close();', 2500);
+        }
+    }    
+}
+
+function VersonInfo(){
+    websocket.send(JSON.stringify({'TYP':4}));
+}
+
+const interval = setInterval(function() {
+    websocket.send(JSON.stringify({'TYP':3}));
+}, 2000);
+
+function Start(Profile){
+    websocket.send(JSON.stringify({'TYP':5,'Profile':Profile}));
+}
+
+function GetProfileInfo(Profile){
+    websocket.send(JSON.stringify({'TYP':2,'Profile':Profile}));
 }
 
 function WiFiSendInfo(){
@@ -113,4 +149,16 @@ function ReflowSendInfo(){
     FlowRamp = document.getElementById('flowRamp').value;
     CoolRamp = document.getElementById('coolRamp').value;
     websocket.send(JSON.stringify({'TYP':2,'PHT':PreheatTemp,'PHR':PreheatRamp,'PHR':PreheatDwel,'FLT':FlowTemp,'FLD':FlowDwel,'FLR':FlowRamp,'CDR':CoolRamp}));
+}
+
+function GetTemp(){
+    return CurrentTemp
+}
+
+function GetVerson(){
+    return Verson
+}
+
+function GetConnectionStat(){
+    return Connected
 }
