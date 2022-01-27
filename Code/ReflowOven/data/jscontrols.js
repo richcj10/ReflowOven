@@ -89,9 +89,10 @@ function initWebSocket() {
 
 function onOpen(event) {
     console.log('Connection opened');
-    VersonInfo();
-    GetProfileInfo();
     Connected = 1;
+    VersonInfo();
+    GetProfileNames();
+    LoadCBProfile();
 }
 
 function onClose(event) {
@@ -103,13 +104,13 @@ function onClose(event) {
 function onMessage(event) {
     let data = JSON.parse(event.data);
     console.log(data);
-    if(thisSession.hasOwnProperty('VER')){
+    if(data.hasOwnProperty('VER')){
         Verson = data["VER"];
     }
-    if(thisSession.hasOwnProperty('CNTTMP')){
+    if(data.hasOwnProperty('CNTTMP')){
         CurrentTemp = data["CNTTMP"];
     }
-    if(thisSession.hasOwnProperty('RESP')){
+    if(data.hasOwnProperty('RESP')){
         if(data["RESP"] == 1){
             window.setTimeout('alert("Oven Started");window.close();', 2500);
         }
@@ -117,7 +118,7 @@ function onMessage(event) {
             window.setTimeout('alert("Oven Stoped");window.close();', 2500);
         }
     }
-    if(thisSession.hasOwnProperty('RESP')){
+    if(data.hasOwnProperty('RESP')){
         if(data["RESP"] == 1){
             window.setTimeout('alert("Oven Started");window.close();', 2500);
         }
@@ -171,13 +172,13 @@ function ReflowSendInfo(){
 }
 
 function GetTemp(){
-    return CurrentTemp
+    return CurrentTemp;
 }
 
 function GetVerson(){
-    return Verson
+    return Verson;
 }
 
 function GetConnectionStat(){
-    return Connected
+    return Connected;
 }

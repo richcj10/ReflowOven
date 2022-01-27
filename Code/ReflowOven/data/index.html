@@ -15,10 +15,10 @@
       <fieldset>
         <legend>Controls:</legend>
         Profile: <select name="combo" id="comboProfile"></select>
-        <button onclick="location.href='/start'" class="button">Start</button>
+        <button id = StartBtn class="button">Start</button>
         <button onclick="location.href='./ReflowConfig.html'" class="button">Reflow Config</button>
         <button onclick="location.href='./WiFiConfig.html'" class="button">WiFi Config</button>
-        <button class="button">Extra</button>
+        <button class="button">About</button>
       </fieldset>
       <div>
         <a class = "NextTo" href="https://github.com/richcj10/ReflowOven">Verson</a> <p id ="ver" ><small>0:0:0</small></p>
@@ -53,27 +53,36 @@
   });
   var select = document.getElementById('comboProfile');
   select.addEventListener('change',function(){
-    console.log("Here")
+    console.log("ComboBox Change")
     // ReflowChart.series[0].update({
     //     data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     //   }, false);
     //   ReflowChart.redraw();
   });
+  var StartButton = document.getElementById('StartBtn');
+  StartButton.addEventListener('click',function(){
+    console.log("Start");
+    Start(select.value);
+  });
   window.onload = function() {
     initWebSocket();
   };
-  if(GetConnectionStat()){
-    LoadCBProfile();
-    document.getElementById("ver").innerHTML = GetVerson();
-    setInterval(function ( ) {
-      var x =  Date().getTime();
-      var y = GetTemp();
+  var FirstRun = 0;
+  setInterval(function () {
+    if(GetConnectionStat()){
+      if(FirstRun == 0){
+        LoadCBProfile();
+        document.getElementById("ver").innerHTML = GetVerson();
+        FirstRun = 1;
+      }
+      var x = (new Date()).getTime(), 
+      y = GetTemp();
       if(chartT.series[0].data.length > 40) {
         chartT.series[0].addPoint([x, y], true, true, true);
       } else {
         chartT.series[0].addPoint([x, y], true, false, true);
       }
-    }, 1000 ) ;
-  }
+    }
+  }, 1000 );
 </script>
 </html>

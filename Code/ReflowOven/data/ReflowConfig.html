@@ -58,10 +58,15 @@
   <script src="jscontrols.js"></script>
 </body>
 <script>
-    
     window.onload = function() {
         initWebSocket();
     };
+    var interval = setInterval(function() {
+      if(GetConnectionStat()){
+        LoadCBProfile();
+        clearInterval(interval);
+      }
+    }, 100);
     var select = document.getElementById('comboProfile');
     var reflowsave = document.getElementById('ReFlSave');
     select.addEventListener('change',function(){
