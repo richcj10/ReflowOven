@@ -1,7 +1,7 @@
 #platform "Gen4-uLCD-24PT"
 
 
-// generated 1/14/2022 7:41:42 PM
+// generated 2/5/2022 11:18:45 PM
 
 #MODE RUNFLASH
 
@@ -128,47 +128,51 @@
     REPORT_MAGIC_EVENT_DBYTES 11
 // End P1.inc
     nObjects        17
-    nInputs         22
+    nInputs         25
     nAniTimers      0
     nScopes         1
-    nStrings        4
+    nStrings        5
 #END
 
 #DATA
     word FormStartIndex 0, 6, 10, 12, 14
     word FormEndIndex 6, 10, 12, 14, 17
-    word InputControls -1, 0, -1, -1, 44, -1, 88, 132, 176, 220, 264, 308, 352, 396, 440
+    word InputControls -1, 0, -1, -1, 44, -1, 88, 154, 220, 286, 330, 374, 418, 462, 506
     word InputData t4Dbutton, 0, -1, -1, -1, -1, -1, -1, 0, 22, 2,
                 OT_REPORT, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 tWinButton, 1, -1, -1, -1, -1, -1, -1, 0, 66, 2,
                 OT_ACTIVATE, 10, 1, 0, 18, 0, 0, 0, 0, 0, 0,
                 tWinButton, 1, -1, -1, -1, -1, -1, -1, 0, 110, 4,
-                OT_ACTIVATE, 10, 2, 0, 18, 0, 0, 0, 0, 0, 0,
-                tWinButton, 1, -1, -1, -1, -1, -1, -1, 0, 154, 6,
-                OT_ACTIVATE, 10, 3, 0, 18, 0, 0, 0, 0, 0, 0,
-                tWinButton, 1, -1, -1, -1, -1, -1, -1, 0, 198, 8,
-                OT_ACTIVATE, 10, 4, 0, 18, 0, 0, 0, 0, 0, 0,
-                tWinButton, 1, -1, -1, -1, -1, -1, -1, 0, 242, 10,
+                OT_ACTIVATE, 10, 2, 0, 18, 0, 0, 0, 0, 132, 0,
+                OT_REPORT, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2,
+                tWinButton, 1, -1, -1, -1, -1, -1, -1, 0, 176, 6,
+                OT_ACTIVATE, 10, 3, 0, 18, 0, 0, 0, 0, 198, 0,
+                OT_REPORT, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3,
+                tWinButton, 1, -1, -1, -1, -1, -1, -1, 0, 242, 8,
+                OT_ACTIVATE, 10, 4, 0, 18, 0, 0, 0, 0, 264, 0,
+                OT_REPORT, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
+                tWinButton, 1, -1, -1, -1, -1, -1, -1, 0, 308, 10,
                 OT_ACTIVATE, 10, 0, 0, 18, 0, 0, 0, 0, 0, 0,
-                tWinButton, 1, -1, -1, -1, -1, -1, -1, 0, 286, 12,
+                tWinButton, 1, -1, -1, -1, -1, -1, -1, 0, 352, 12,
                 OT_REPORT, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5,
-                tWinButton, 1, -1, -1, -1, -1, -1, -1, 0, 330, 14,
+                tWinButton, 1, -1, -1, -1, -1, -1, -1, 0, 396, 14,
                 OT_ACTIVATE, 10, 1, 0, 18, 0, 0, 0, 0, 0, 0,
-                tKnob, 118, 206, 45, 315, 270, 100, 243, 0, 374, 2,
+                tKnob, 118, 206, 45, 315, 270, 100, 243, 0, 440, 2,
                 OT_REPORT, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                tWinButton, 1, -1, -1, -1, -1, -1, -1, 0, 418, 16,
+                tWinButton, 1, -1, -1, -1, -1, -1, -1, 0, 484, 16,
                 OT_ACTIVATE, 10, 1, 0, 18, 0, 0, 0, 0, 0, 0,
-                tWinButton, 1, -1, -1, -1, -1, -1, -1, 0, 462, 18,
+                tWinButton, 1, -1, -1, -1, -1, -1, -1, 0, 528, 18,
                 OT_ACTIVATE, 10, 1, 0, 18, 0, 0, 0, 0, 0, 0
     word iStrings0  Strings0StartH, Strings0StartL, Strings0Size, 40, 244, 91, 266, WHITE, BLACK, 0, 1, 1, 0 
     word iStrings1  Strings1StartH, Strings1StartL, Strings1Size, 48, 16, 195, 184, WHITE, BLACK, 0, 1, 1, 2 
     word iStrings2  Strings2StartH, Strings2StartL, Strings2Size, 44, 84, 202, 118, WHITE, BLACK, 0, 1, 1, 3 
-    word iStrings3  Strings3StartH, Strings3StartL, Strings3Size, 8, 168, 214, 228, WHITE, BLACK, 0, 1, 1, 4 
+    word iStrings3  Strings3StartH, Strings3StartL, Strings3Size, 8, 168, 214, 207, WHITE, BLACK, 0, 1, 1, 4 
+    word iStrings4  Strings4StartH, Strings4StartL, Strings4Size, 16, 212, 222, 251, WHITE, BLACK, 0, 1, 1, 4 
     word oDipSwitchs 0
     word oKnobs 1, iKnob0
     word oWinButtons 9, iWinbutton0, iWinbutton1, iWinbutton2, iWinbutton3, iWinbutton4, iWinbutton5, iWinbutton6, iWinbutton7, iWinbutton8
     word oForms 5, -1, -1, -1, -1, -1
-    word oStringss 4, iStrings0, iStrings1, iStrings2, iStrings3
+    word oStringss 5, iStrings0, iStrings1, iStrings2, iStrings3, iStrings4
     word oUserleds 1, iUserled0
     word oStaticTexts 5, iStatictext0, iStatictext1, iStatictext2, iStatictext3, iStatictext4
     word oScopes 1
@@ -176,10 +180,10 @@
     word FormBGcolors 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
     word kKeyboardKeystrokes -1
     word rKeyboardRoutines -1
-    word oScopen  BLACK, 0x0280, 1, 10, 10, 12, 10, 60, LIME, BLUE, RED, FUCHSIA, 1, 218, 0, 100, 148, YELLOW, 1, 0, 229, 149, 218, 149
+    word oScopen  BLACK, 0x0280, 1, 10, 10, 12, 2, 60, LIME, BLUE, RED, FUCHSIA, 1, 218, 0, 100, 148, YELLOW, 1, 0, 229, 149, 218, 149
 #END
 
-var stringsCV[4] := [0, 0, 0, 0], hstrings ;
+var stringsCV[5] := [0, 0, 0, 0, 0], hstrings ;
 var scTracebuf[8] ;   // each scope has 8 entries
 var scCurpos[1] := [0] ;
 var sc0Oldval1[219], sc0Newval1[219]  ;
@@ -563,6 +567,7 @@ func main()
     hFonts[1] := FONT3 ;
     hFonts[2] := FONT3 ;
     hFonts[3] := FONT3 ;
+    hFonts[4] := FONT3 ;
     sc0Oldval1[0] := -1 ; // init scope, only needed for first trace
     scTracebuf[0] := sc0Oldval1 ;
     scTracebuf[1] := sc0Newval1 ;
@@ -570,7 +575,7 @@ func main()
     hstrings := file_Open("UI1835~1.txf", 'r') ; // Open handle to access uSD strings, uncomment if required
     // init comms
     com_Init(comRX,CMDLenMAX,0);
-    com_SetBaud(COM0,960);
+    com_SetBaud(COM0,11520);
     com_TXbuffer(comTX, 100, 0);
     // tag 'real' objects
     for (i := 0; i <= MaxTotObjects; i++)

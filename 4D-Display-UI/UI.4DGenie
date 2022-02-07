@@ -5,7 +5,7 @@ Depends
 end
 Options
     Genie
-    Speed                        9600
+    Speed                        115200
     Checksum                     No
     ResponseSize                 2
     Multidrop                    No
@@ -199,7 +199,7 @@ Scope
     GraticuleYinc                10
     Height                       90
     Left                         12
-    RefreshIncrement             10
+    RefreshIncrement             2
     Top                          60
     Trace1Color                  LIME
     Trace2Color                  BLUE
@@ -455,7 +455,7 @@ Form
     Source.Left                  0
     Source.Top                   0
     Source.Width                 0
-    OnActivate                   ''
+    OnActivate                   'Report Message'
     OnCreate                     ''
     OnRepeat                     ''
     OnTouchMoving                ''
@@ -590,7 +590,7 @@ Form
     Source.Left                  0
     Source.Top                   0
     Source.Width                 0
-    OnActivate                   ''
+    OnActivate                   'Report Message'
     OnCreate                     ''
     OnRepeat                     ''
     OnTouchMoving                ''
@@ -691,7 +691,7 @@ Form
     Source.Left                  0
     Source.Top                   0
     Source.Width                 0
-    OnActivate                   ''
+    OnActivate                   'Report Message'
     OnCreate                     ''
     OnRepeat                     ''
     OnTouchMoving                ''
@@ -770,7 +770,7 @@ Strings
     Alias                        Strings3
     Alignment                    Left
     BGcolor                      BLACK
-    Height                       61
+    Height                       40
     FGcolor                      WHITE
     Font.Bold                    No
     Font.CharSet                 ANSI
@@ -805,4 +805,26 @@ StaticText
     Transparent                  Yes
     Width                        225
     WordWrap                     Yes
+end
+Strings
+    Name                         Strings4
+    Alias                        Strings4
+    Alignment                    Left
+    BGcolor                      BLACK
+    Height                       40
+    FGcolor                      WHITE
+    Font.Bold                    No
+    Font.CharSet                 ANSI
+    Font.Italic                  No
+    Font.Name                    '4D Font3 (8x12)'
+    Font.Opaque                  Yes
+    Font.Size                    16
+    Font.Strikethrough           No
+    Font.Underline               No
+    Left                         16
+    Strings                      ''
+    StringsStyle                 Message
+    Top                          212
+    Width                        207
+    OnChanged                    ''
 end

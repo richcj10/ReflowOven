@@ -138,7 +138,7 @@ function GetProfileInfo(Profile){
     websocket.send(JSON.stringify({'TYP':2,'Profile':Profile}));
 }
 
-const interval = setInterval(function() {
+var RepeatCom = setInterval(function() {
     if(Connected){
         websocket.send(JSON.stringify({'TYP':3}));
     }

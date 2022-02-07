@@ -28,7 +28,7 @@ void setup() {
   //WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE, INADDR_NONE);
   //String hostname(HOSTNAME);
   WiFi.hostname(hostname);
-  //DisplaySetup();
+  DisplaySetup();
   // Serial.println("Boot");
   // TempSetup();
   ProfileSetup();
@@ -40,7 +40,7 @@ void setup() {
      //WiFi.begin(GetSSID().c_str(), GetSSIDPassword().c_str());
     while (WiFi.status() != WL_CONNECTED) {
       delay(1000);
-      Serial.println(".");
+      //Serial.println(".");
       WiFiStartupTimeout = WiFiStartupTimeout +1;
       if(WiFiStartupTimeout > 10){
         WiFiTimeout = 1;
@@ -49,11 +49,11 @@ void setup() {
     }
   }
   if(WiFiTimeout == 1){
-      Serial.println("AP Mode");
+      //Serial.println("AP Mode");
       WiFi.softAP("ReflowOven");
   }
   Serial.println("Ready");
-
+  SetWifiConnect(1);
   // // Print ESP32 Local IP Address
   Serial.println(WiFi.localIP());
   WebserviceBegin();
@@ -76,24 +76,24 @@ void setup() {
     Serial.println("Start updating " + type);
   });
   ArduinoOTA.onEnd([]() {
-    Serial.println("\nEnd");
+    //Serial.println("\nEnd");
   });
   ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
-    Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
+    //Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
   });
   ArduinoOTA.onError([](ota_error_t error) {
-    Serial.printf("Error[%u]: ", error);
-    if (error == OTA_AUTH_ERROR) {
-      Serial.println("Auth Failed");
-    } else if (error == OTA_BEGIN_ERROR) {
-      Serial.println("Begin Failed");
-    } else if (error == OTA_CONNECT_ERROR) {
-      Serial.println("Connect Failed");
-    } else if (error == OTA_RECEIVE_ERROR) {
-      Serial.println("Receive Failed");
-    } else if (error == OTA_END_ERROR) {
-      Serial.println("End Failed");
-    }
+    // Serial.printf("Error[%u]: ", error);
+    // if (error == OTA_AUTH_ERROR) {
+    //   Serial.println("Auth Failed");
+    // } else if (error == OTA_BEGIN_ERROR) {
+    //   Serial.println("Begin Failed");
+    // } else if (error == OTA_CONNECT_ERROR) {
+    //   Serial.println("Connect Failed");
+    // } else if (error == OTA_RECEIVE_ERROR) {
+    //   Serial.println("Receive Failed");
+    // } else if (error == OTA_END_ERROR) {
+    //   Serial.println("End Failed");
+    // }
   });
 
   // Start OTA server.
@@ -108,6 +108,7 @@ char OvenState = 0;
 
 void loop() {
   ArduinoOTA.handle();
+  DisplayRead();
   if((ReflowTime + OVENCONTROLLOOP) < millis()){ //update every 20ms without blocking!
     //TempRead();
     //ReflowTime = millis();
@@ -118,10 +119,10 @@ void loop() {
     //  ReflowStop();
     //}
   }
-  // if((UxTime + UXCONTROLLOOP) < millis()){ //update every 20ms without blocking!
-  //   UxTime = millis();
-  //   //DisplayUpdate();
-  // }
+   if((UxTime + UXCONTROLLOOP) < millis()){ //update every 20ms without blocking!
+     UxTime = millis();
+     DisplayUpdate();
+   }
 }
 
 

@@ -61,10 +61,10 @@
     window.onload = function() {
         initWebSocket();
     };
-    var interval = setInterval(function() {
+    var WaitForConnect = setInterval(function() {
       if(GetConnectionStat()){
         LoadCBProfile();
-        clearInterval(interval);
+        clearInterval(WaitForConnect);
       }
     }, 100);
     var select = document.getElementById('comboProfile');

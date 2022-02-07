@@ -36,7 +36,7 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
     DeserializationError err = deserializeJson(json, data);
     if (err) {
       //Serial.print(F("deserializeJson() failed with code "));
-      Serial.println(err.c_str());
+      //Serial.println(err.c_str());
       return;
     }
     //serializeJsonPretty(json, Serial);
@@ -69,7 +69,7 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
       // }
     }
     if(Type == 3){ //Send Reflow Profile Names 
-      Serial.println("Temp"); 
+      //Serial.println("Temp"); 
       jsonDocTx.clear();
       jsonDocTx["CNTTMP"] = TempRead();
 
@@ -78,14 +78,14 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
       Serial.printf("Sending: %s", output);
       if (ws.availableForWriteAll()) {
         ws.textAll(output);
-        Serial.printf("WS Send TMP\r\n");
+        //Serial.printf("WS Send TMP\r\n");
       } 
-      else {
-        Serial.printf("...queue is full\r\n");
-      }
+      //else {
+        //Serial.printf("...queue is full\r\n");
+      //}
     }
     if(Type == 4){ //Send Reflow Profile Names 
-      Serial.println("Type Verson"); 
+      //Serial.println("Type Verson"); 
       jsonDocTx.clear();
       jsonDocTx["VER"] = String(VERSION);
 
@@ -94,15 +94,15 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
       Serial.printf("Sending: %s", output);
       if (ws.availableForWriteAll()) {
         ws.textAll(output);
-        Serial.printf("WS Send Ver\r\n");
+        //Serial.printf("WS Send Ver\r\n");
       } 
       else {
-        Serial.printf("...queue is full\r\n");
+        //Serial.printf("...queue is full\r\n");
       }
     }
     if(Type == 5){ //StartProfile
       Status = !Status;
-      Serial.println("Start Profile"); 
+      //Serial.println("Start Profile"); 
       jsonDocTx.clear();
       jsonDocTx["RESP"] = Status;
 
@@ -111,18 +111,18 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
       Serial.printf("Sending: %s", output);
       if (ws.availableForWriteAll()) {
         ws.textAll(output);
-        Serial.printf("WS Send Ver\r\n");
+        //Serial.printf("WS Send Ver\r\n");
       } 
       else {
-        Serial.printf("...queue is full\r\n");
+        //Serial.printf("...queue is full\r\n");
       }
     }
     if(Type == 6){ //StartProfile
-      Serial.println("Profile Name"); 
+      //Serial.println("Profile Name"); 
 
       if (ws.availableForWriteAll()) {
         ws.textAll(GetProfileNames().c_str());
-        Serial.printf("WS Send Ver\r\n");
+        //Serial.printf("WS Send Ver\r\n");
       } 
       else {
         Serial.printf("...queue is full\r\n");
@@ -140,10 +140,10 @@ void onEvent(AsyncWebSocket       *server,
 
     switch (type) {
         case WS_EVT_CONNECT:
-            Serial.printf("WebSocket client #%u connected from %s\n", client->id(), client->remoteIP().toString().c_str());
+            //Serial.printf("WebSocket client #%u connected from %s\n", client->id(), client->remoteIP().toString().c_str());
             break;
         case WS_EVT_DISCONNECT:
-            Serial.printf("WebSocket client #%u disconnected\n", client->id());
+            //Serial.printf("WebSocket client #%u disconnected\n", client->id());
             break;
         case WS_EVT_DATA:
             handleWebSocketMessage(arg, data, len);
@@ -163,7 +163,7 @@ String getTemperatureHTML() {
   float temperature = TempRead();
   // Read temperature as Fahrenheit (isFahrenheit = true)
   //float temperature = 1.8 * bme.readTemperature() + 32;
-  Serial.println(temperature);
+  //Serial.println(temperature);
   return String(temperature);
 }
 
@@ -172,7 +172,7 @@ void WebserviceBegin(){
   initWebSocket();
   // Route to set GPIO to HIGH
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-      Serial.println("connection");
+      //Serial.println("connection");
       request->send(LittleFS, "/index.html", String(), false, processor);
   });
 // Route for root / web page
@@ -183,8 +183,8 @@ void WebserviceBegin(){
   });
 
   server.onNotFound([](AsyncWebServerRequest *request){
-    Serial.print("got unhandled request for ");
-    Serial.println(request->url());
+    //Serial.print("got unhandled request for ");
+    //Serial.println(request->url());
     request->send(404);
   });
 
@@ -201,7 +201,7 @@ String processor(const String& var){
     else{
       ledState = "OFF";
     }
-    Serial.print(ledState);
+    //Serial.print(ledState);
     return ledState;
   }
   else if (var == "TEMPERATURE"){

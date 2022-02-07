@@ -19644,6 +19644,13 @@ Diode with low voltage drop</description>
 <wire x1="93.98" y1="43.18" x2="93.98" y2="15.24" width="0.1524" layer="91"/>
 </segment>
 </net>
+<net name="N$7" class="0">
+<segment>
+<pinref part="U$1" gate="G$1" pin="GPIO5"/>
+<wire x1="40.64" y1="76.2" x2="73.66" y2="76.2" width="0.1524" layer="91"/>
+<pinref part="R1" gate="G$1" pin="1"/>
+</segment>
+</net>
 </nets>
 </sheet>
 </sheets>

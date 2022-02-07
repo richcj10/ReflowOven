@@ -121,13 +121,13 @@ void listDir(const char * dirname) {
 bool loadWiFiConfig() {
   File configFile = LittleFS.open("/WiFi.json", "r");
   if (!configFile) {
-    Serial.println("Failed to open config file");
+    //Serial.println("Failed to open config file");
     return false;
   }
 
   size_t size = configFile.size();
   if (size > 1024) {
-    Serial.println("Config file size is too large");
+    //Serial.println("Config file size is too large");
     return false;
   }
 
@@ -138,7 +138,7 @@ bool loadWiFiConfig() {
   StaticJsonDocument<200> doc;
   auto error = deserializeJson(doc, buf.get());
   if (error) {
-    Serial.println("Failed to parse config file");
+    //Serial.println("Failed to parse config file");
     return false;
   }
 
@@ -147,10 +147,10 @@ bool loadWiFiConfig() {
   const char* strB = doc["PSWD"];
   std::string WifiPassword = strB;
 
-  Serial.print("Loaded WiFi: ");
-  Serial.println(WiFiSSID.c_str());
-  Serial.print("Loaded pswd: ");
-  Serial.println(WifiPassword.c_str());
+  //Serial.print("Loaded WiFi: ");
+  //Serial.println(WiFiSSID.c_str());
+  //Serial.print("Loaded pswd: ");
+  //Serial.println(WifiPassword.c_str());
   return true;
 }
 
@@ -161,7 +161,7 @@ bool saveConfig(String SSID, String Password){
 
   File configFile = LittleFS.open("/WiFi.json", "w");
   if (!configFile) {
-    Serial.println("Failed to open config file for writing");
+    //Serial.println("Failed to open config file for writing");
     return false;
   }
 
@@ -174,7 +174,7 @@ void LoadProfileData(char ProfileNumber){
   Serial.print(F("Open Profile "));
   File file = LittleFS.open("/Profiles.json", "r");
   if (!file){
-    Serial.print(F("Open file failed: "));
+    //Serial.print(F("Open file failed: "));
     return;
   }
 
@@ -184,8 +184,8 @@ void LoadProfileData(char ProfileNumber){
 
   if (error)
   {
-    Serial.print(F("deserializeJson() failed: "));
-    Serial.println(error.f_str());
+    //Serial.print(F("deserializeJson() failed: "));
+    //Serial.println(error.f_str());
     return;
   }
   //Serial.print("Profile = ");
@@ -224,7 +224,8 @@ char WifiConfigStatus(){
 
 String GetProfileNames(){
   char value = 0;
-  String StringValue = "{PName:";
+  String StringValue ="{\"data\":[";//48.756080,2.302038]}";
+  //String StringValue = "{PName:";
   for(char i = 0;i<ReflowProfile;i++){
     for(char k = 0;k<NAMELENTH;k++){
       value = ProfileNames[i][k];
@@ -232,12 +233,12 @@ String GetProfileNames(){
         StringValue += String(value);
       }
       else{
+        StringValue += ",";
         break;
       }
     }
-    StringValue += ",";
   }
-  StringValue += "New}";
-  Serial.println(StringValue);
+  StringValue += "New]}";
+  //Serial.println(StringValue);
   return StringValue;
 }

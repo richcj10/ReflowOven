@@ -1,4 +1,4 @@
-// File generated 1/14/2022 7:41:36 PM
+// File generated 2/5/2022 11:18:38 PM
 // Warning! This is a generated file, any manual changes will be
 // lost during the next generation.
 
@@ -10,6 +10,8 @@
 #constant  Strings2Size     1
 #constant  Strings3Count    0
 #constant  Strings3Size     1
+#constant  Strings4Count    0
+#constant  Strings4Size     1
 #constant  IFONT_OFFSET     0
 // object indexes into ImageControl
 #CONST
@@ -41,8 +43,10 @@
 #constant  Strings2StartL   0x400
 #constant  Strings3StartH   0x0
 #constant  Strings3StartL   0x600
+#constant  Strings4StartH   0x0
+#constant  Strings4StartL   0x800
 
 #IFNOT EXISTS NOGLOBALS
 var hndl ;
-var hFonts[4] ;
+var hFonts[5] ;
 #ENDIF
