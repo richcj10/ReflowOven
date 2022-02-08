@@ -1,66 +1,149 @@
-#include <genieArduino.h>
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include "Display.h"
 #include "Temperature.h"
 #include "Version.h"
-
-Genie genie;
+#include "Define.h"
 
 char WiFiMode = 0;
-#define RESETLINE 4  // Change this if you are not using an Arduino Adaptor Shield Version 2 (see code below)
+char ReflowMode = 0;
+
+char ScreenPage = 0;
+char previousPage = 0;
+char ButtonPressed = 0;
+char ScreenAlive = 0;
+
+void ScreenDataupdate();
+char CheckScreenFB();
+void WriteObject(uint16_t object, uint16_t index, uint16_t data);
+char genieWriteStr(uint16_t index, char *string);
+
 void DisplaySetup(){
-  genie.Begin(Serial);   // Use Serial0 for talking to the Genie Library, and to the 4D Systems display
-
-  genie.AttachEventHandler(myGenieEventHandler); // Attach the user function Event Handler for processing events
-
-  //pinMode(RESETLINE, OUTPUT);  // Set D4 on Arduino to Output (4D Arduino Adaptor V2 - Display Reset)
-  //digitalWrite(RESETLINE, 1);  // Reset the Display via D4
-  //delay(100);
-  //digitalWrite(RESETLINE, 0);  // unReset the Display via D4
-
-  // Let the display start up after the reset (This is important)
-  // Increase to 4500 or 5000 if you have sync problems as your project gets larger. Can depent on microSD init speed.
-  //delay (3500); 
-
-  //genie.WriteContrast(10); // About 2/3 Max Brightness
-
-  //genie.WriteStr(0, GENIE_VERSION);
-}
-bool LED = 0;
-char FirstTime = 0;
-void DoOnce(){
-  genie.WriteStr(3, String(VERSION));
-  genie.WriteStr(4, "0:0:0:0");
+  pinMode(DSPLYRSET, OUTPUT);
+  digitalWrite(DSPLYRSET, HIGH);
+  //Serial.begin(115200);
+  delay(100);
+  digitalWrite(DSPLYRSET, LOW);
+  delay(3000);
 }
 
-void DisplayUpdate()
-{
-  int TempValue = int(TempRead());
-  //Serial.println("Hi");
-   // This calls the library each loop to process the queued responses from the display
-  if(FirstTime == 0){
-    FirstTime = 1;
-    DoOnce();
+void DisplayUpdate(){
+  CheckScreenFB();
+  ScreenDataupdate();
+}
+
+void ScreenDataupdate(){
+  String Temp = String(TempRead(),2);
+  int ScopeValue = map(TempRead(), 0, 300, 0, 100);
+  switch (ScreenPage) {
+    case 0:    // your hand is on the sensor
+      if(previousPage != ScreenPage){  //Does it only need to run it once in this state, put the code here
+        previousPage = ScreenPage;
+      }
+      //WriteObject(USERLED, 0, Led);
+      WriteObject(SCOPE, 0, ScopeValue);
+      genieWriteStr(0, (char*)Temp.c_str());
+      break;
+    case 1:    // your hand is close to the sensor
+      break;
+    case 2:    // your hand is a few inches from the sensor
+      if(previousPage != ScreenPage){  //Does it only need to run it once in this state, put the code here
+        previousPage = ScreenPage;
+        genieWriteStr(1, "192.168.5.1/rLights.Camera.Action");
+      }
+      if(ButtonPressed == 5){
+        //WiFi AP Mode
+        ButtonPressed = 0;
+        
+      }
+      break;
+    case 3:    // your hand is nowhere near the sensor
+      if(previousPage != ScreenPage){  //Does it only need to run it once in this state, put the code here
+        previousPage = ScreenPage;
+        genieWriteStr(2, "Reflow Profile");
+      }
+      break;
+    case 4:    // your hand is nowhere near the sensor
+      if(previousPage != ScreenPage){  //Does it only need to run it once in this state, put the code here
+        previousPage = ScreenPage;
+        genieWriteStr(3, (char *)String(VERSION).c_str());
+        genieWriteStr(4, (char *)String(BUILD_TIMESTAMP).c_str());
+      }
+      break;
   }
-  // Write to CoolGauge0 with the value in the gaugeVal variable
-  if(WiFiMode == 1){
-    genie.WriteObject(GENIE_OBJ_USER_LED, 0, 1);
+}
+
+void WriteObject(uint16_t object, uint16_t index, uint16_t data){
+    uint16_t msb, lsb;
+    uint8_t checksum;
+    lsb = lowByte(data);
+    msb = highByte(data);
+    Serial.write(1);
+    checksum  = 1;
+    Serial.write(object);
+    checksum ^= object;
+    Serial.write(index);
+    checksum ^= index;
+    Serial.write(msb);
+    checksum ^= msb;
+    Serial.write(lsb);
+    checksum ^= lsb;
+    Serial.write(checksum);
+}
+
+char genieWriteStr(uint16_t index, char *string){
+  char* p;
+  uint8_t checksum;
+  int len = strlen(string);
+  if (len > 255)
+      return -1;
+  Serial.write(2);
+  checksum = 2;
+  Serial.write(index);
+  checksum ^= index;
+  Serial.write((unsigned char)len);
+  checksum ^= len;
+  for (p = string; *p; ++p) {
+    Serial.write(*p);
+    checksum ^= *p;
   }
-  genie.WriteObject(GENIE_OBJ_SCOPE, 0, TempValue);
-  genie.WriteStr(0, String(TempValue));
+  Serial.write(checksum);
+  return 1;
 }
 
-void myGenieEventHandler(void)
-{
-  genieFrame Event;
-  genie.DequeueEvent(&Event);
+char CheckScreenFB(){
+  char SreenData[20];
+  char Lenth;
+  if(Serial.available() >= 2){
+    Lenth = Serial.available();
+    for(char k=0;k<Lenth;k++){
+      SreenData[0] = Serial.read();
+      if(SreenData[0] == 6){
+        ScreenAlive = 1;
+      }
+      if(SreenData[0] == 7){
+        SreenData[1] = Serial.read();
+        if(SreenData[1] == 10){ //Fourm Comand
+          ScreenPage = Serial.read();
+        }
+        else if(SreenData[1] == 6){ //Btn Comand
+          ButtonPressed = Serial.read();
+        }
+        else if(SreenData[1] == 30){ //Spcl Button Command
+          Serial.read();
+          Serial.read();
+          ReflowMode = Serial.read();
+        }
+      }
+    }
+  }
+  return 1;
 }
 
-void SetWifiConnect(char mode){
-  WiFiMode = mode;
+char GetGuiWiFi(){
+  return WiFiMode;
 }
 
-void DisplayRead(){
-  genie.DoEvents();
+char GetGuiReflow(){
+  return ReflowMode;
 }

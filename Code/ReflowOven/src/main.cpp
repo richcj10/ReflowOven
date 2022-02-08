@@ -26,11 +26,9 @@ void setup() {
   DebugSetup(0);
   Serial.begin(115200);
   //WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE, INADDR_NONE);
-  //String hostname(HOSTNAME);
   WiFi.hostname(hostname);
-  DisplaySetup();
   // Serial.println("Boot");
-  // TempSetup();
+  TempSetup();
   ProfileSetup();
   if(WifiConfigStatus() == 0){
        WiFi.softAP("ReflowOven");
@@ -53,7 +51,7 @@ void setup() {
       WiFi.softAP("ReflowOven");
   }
   Serial.println("Ready");
-  SetWifiConnect(1);
+  //SetWifiConnect(1);
   // // Print ESP32 Local IP Address
   Serial.println(WiFi.localIP());
   WebserviceBegin();
@@ -97,6 +95,7 @@ void setup() {
   });
 
   // Start OTA server.
+  DisplaySetup();
   ArduinoOTA.setHostname(hostname);
   ArduinoOTA.begin();
 }
@@ -108,7 +107,6 @@ char OvenState = 0;
 
 void loop() {
   ArduinoOTA.handle();
-  DisplayRead();
   if((ReflowTime + OVENCONTROLLOOP) < millis()){ //update every 20ms without blocking!
     //TempRead();
     //ReflowTime = millis();

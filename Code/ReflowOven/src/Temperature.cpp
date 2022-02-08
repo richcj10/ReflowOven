@@ -15,7 +15,7 @@ float alertTemp = 29.5;  //What temperature to trigger the alert at (before hyst
 uint8_t hysteresis = 2; //How much hysteresis to have, in degrees Celcius. Feel free to adjust this, but 2°C seems to be about right.
 
 int TempSetup(){
-    Wire.begin();
+    Wire.begin(2,4);
     Wire.setClock(100000);
     tempSensor.begin();       // Uses the default address (0x60) for SparkFun Thermocouple Amplifier
     //tempSensor.begin(0x66); // Default address (0x66) for SparkX Thermocouple Amplifier

@@ -3,8 +3,7 @@
 
 void DisplaySetup();
 void DisplayUpdate();
-void myGenieEventHandler(void);
-void SetWifiConnect(char mode);
-void DisplayRead();
+char GetGuiWiFi();
+char GetGuiReflow();
 
 #endif

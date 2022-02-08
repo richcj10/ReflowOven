@@ -72,11 +72,11 @@ volatile int count = 0;
 void IRAM_ATTR TimerHandler(){
   count++;
   if(count <= Control){
-    digitalWrite(LED_BUILTIN, HIGH);
+    digitalWrite(HEATERIO, HIGH);
   }
   if(count > 8){
     count = 0;
-    digitalWrite(LED_BUILTIN, LOW);
+    digitalWrite(HEATERIO, LOW);
   }
 }
 
@@ -91,7 +91,7 @@ void StartISR(){
 
 void StopISR(){
     ITimer.detachInterrupt();
-    digitalWrite(LED_BUILTIN, LOW);
+    digitalWrite(HEATERIO, LOW);
 }
 
 enum ReflowStates RunProfileStat = off;  
