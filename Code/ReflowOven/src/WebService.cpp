@@ -2,6 +2,7 @@
 #include "WiFiServer.h"
 #include <ESPAsyncTCP.h>
 #include <ESPAsyncWebServer.h>
+#include <WebSerial.h>
 #include "ArduinoJson.h"
 #include <LittleFS.h>
 #include "Temperature.h"
@@ -71,7 +72,7 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
     if(Type == 3){ //Send Reflow Profile Names 
       //Serial.println("Temp"); 
       jsonDocTx.clear();
-      jsonDocTx["CNTTMP"] = TempRead();
+      jsonDocTx["CNTTMP"] = GetOvenTemp();
 
       serializeJson(jsonDocTx, output, 512);
 
@@ -187,7 +188,7 @@ void WebserviceBegin(){
     //Serial.println(request->url());
     request->send(404);
   });
-
+  WebSerial.begin(&server);
   server.begin();
 }
 

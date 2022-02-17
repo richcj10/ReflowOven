@@ -2,8 +2,12 @@
 #include <Wire.h>
 #include <SparkFun_MCP9600.h>
 #include "Temperature.h"
+#include <WebSerial.h>
+
+#define BOX_CAR_SIZE 3
 
 int TempMode = 0;
+float TempBoxCar[BOX_CAR_SIZE+1];
 MCP9600 tempSensor;
 uint8_t risingAlert = 1; //What alert to use for detecting cold -> hot transitions.
 uint8_t fallingAlert = 3; //What alert to use for detecting hot -> cold transitions.
@@ -13,7 +17,7 @@ float alertTemp = 29.5;  //What temperature to trigger the alert at (before hyst
                         //This is about the surface temperature of my finger, but please change this if 
                         //you have colder/warmer hands or if the ambient temperature is different.
 uint8_t hysteresis = 2; //How much hysteresis to have, in degrees Celcius. Feel free to adjust this, but 2°C seems to be about right.
-
+void TempFilterSetup();
 int TempSetup(){
     Wire.begin(2,4);
     Wire.setClock(100000);
@@ -35,7 +39,8 @@ int TempSetup(){
   //check if the Device ID is correct
   if(tempSensor.checkDeviceID()){
     Serial.println("Device ID is correct!");     
-    TempMode = 2;   
+    TempMode = 2;  
+    TempFilterSetup(); 
   }
   else {
     //Serial.println("Device ID is not correct! Freezing.");
@@ -47,11 +52,37 @@ int TempSetup(){
 }
 
 int randomNumber = 0;
+int i = 0;
+float TempTotal = 0;
+float ReturnTemp = 0;
+
+void TempFilterSetup(){
+  for(i = 0;i<BOX_CAR_SIZE;i++){
+    TempBoxCar[i] = tempSensor.getThermocoupleTemp();
+    delay(100);
+  }
+}
 
 float TempRead(){
   if(TempMode > 0){
-    //Serial.print("Thermocouple: ");
-    //Serial.println(tempSensor.getThermocoupleTemp());
+    TempTotal = 0;
+    for(i = 0;i<BOX_CAR_SIZE;i++){
+      TempBoxCar[i] = TempBoxCar[i+1];
+      //Serial.print("I = ");
+      //Serial.println(i);
+      //Serial.print("Prev Temp = ");
+      //Serial.println(TempBoxCar[i]);
+      TempTotal = TempTotal + TempBoxCar[i];
+    }
+    //Serial.print("Total Temp = ");
+    //Serial.println(TempTotal);
+    TempBoxCar[BOX_CAR_SIZE] = tempSensor.getThermocoupleTemp();
+    TempTotal = TempTotal + TempBoxCar[BOX_CAR_SIZE];
+    //Serial.print("Total Temp = ");
+    //Serial.println(TempTotal);
+    ReturnTemp = (TempTotal/BOX_CAR_SIZE+1);
+    //Serial.print(" Temp = ");
+    //Serial.println(ReturnTemp);
     //Serial.print(" °C   Ambient: ");
     //Serial.println(tempSensor.getAmbientTemp());
     //Serial.print(" °C   Temperature Delta: ");
@@ -59,10 +90,14 @@ float TempRead(){
     //Serial.print(" °C");
 
     //Serial.println(); 
-    return tempSensor.getThermocoupleTemp();
+    return ReturnTemp;
   }
   else{
     randomNumber = randomNumber + 1;
     return randomNumber;
   }
+}
+
+float GetOvenTemp(){
+  return ReturnTemp;
 }

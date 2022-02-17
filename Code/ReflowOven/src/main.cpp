@@ -21,6 +21,9 @@ char WiFiStartupTimeout = 0;
 char WiFiTimeout = 0;
 
 void setup() {
+  pinMode(HEATERIO, OUTPUT);
+  digitalWrite(HEATERIO, LOW);
+  DisplayReset();
   // put your setup code here, to run once:
   pinMode(5,OUTPUT);
   DebugSetup(0);
@@ -102,25 +105,24 @@ void setup() {
 
 unsigned long ReflowTime = millis();
 unsigned long UxTime = millis();
+unsigned long ReadTime = millis();
 
 char OvenState = 0;
 
 void loop() {
   ArduinoOTA.handle();
-  if((ReflowTime + OVENCONTROLLOOP) < millis()){ //update every 20ms without blocking!
-    //TempRead();
-    //ReflowTime = millis();
-    //if(OvenState == 1){
-    //  RunProfile(1);
-    //}
-    //if(OvenState == 0){
-    //  ReflowStop();
-    //}
+  if((ReflowTime + OVEN_CONTROL_LOOP_MS) < millis()){ //update every OVEN_CONTROL_LOOP_MS without blocking!
+    ReflowTime = millis();
+    RunProfile();
   }
-   if((UxTime + UXCONTROLLOOP) < millis()){ //update every 20ms without blocking!
-     UxTime = millis();
-     DisplayUpdate();
-   }
+  if((UxTime + UX_CONTROL_LOOP_MS) < millis()){ //update every UX_CONTROL_LOOP_MS without blocking!
+    UxTime = millis();
+    //DisplayUpdate();
+  }
+  if((ReadTime + SAMPLE_INTERVAL_MS) < millis()){ //update every UX_CONTROL_LOOP_MS without blocking!
+    ReadTime = millis();
+    TempRead();
+  }
 }
 
 

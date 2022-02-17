@@ -19,12 +19,16 @@ void WriteObject(uint16_t object, uint16_t index, uint16_t data);
 char genieWriteStr(uint16_t index, char *string);
 
 void DisplaySetup(){
-  pinMode(DSPLYRSET, OUTPUT);
-  digitalWrite(DSPLYRSET, HIGH);
+
   //Serial.begin(115200);
   delay(100);
-  digitalWrite(DSPLYRSET, LOW);
+  digitalWrite(RESETLINE, LOW);
   delay(3000);
+}
+
+void DisplayReset(){
+  pinMode(RESETLINE, OUTPUT);
+  digitalWrite(RESETLINE, HIGH);
 }
 
 void DisplayUpdate(){
@@ -49,7 +53,9 @@ void ScreenDataupdate(){
     case 2:    // your hand is a few inches from the sensor
       if(previousPage != ScreenPage){  //Does it only need to run it once in this state, put the code here
         previousPage = ScreenPage;
-        genieWriteStr(1, "192.168.5.1/rLights.Camera.Action");
+        genieWriteStr(1, "Lights.Camera.Action");
+        genieWriteStr(5, "192.168.5.1");
+        genieWriteStr(6, "ReflowOven");
       }
       if(ButtonPressed == 5){
         //WiFi AP Mode
@@ -114,7 +120,7 @@ char genieWriteStr(uint16_t index, char *string){
 char CheckScreenFB(){
   char SreenData[20];
   char Lenth;
-  if(Serial.available() >= 2){
+  if(Serial.available() >= 6){
     Lenth = Serial.available();
     for(char k=0;k<Lenth;k++){
       SreenData[0] = Serial.read();

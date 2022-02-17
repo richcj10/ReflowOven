@@ -25,12 +25,12 @@ Form
     Alias                        Main
     Bgtype                       Color
     Color                        BLACK
-    Image                        (None)
-    Source.Height                0
+    Image                        369182.jpg
+    Source.Height                1600
     Source.Left                  0
     Source.Top                   0
-    Source.Width                 0
-    OnActivate                   ''
+    Source.Width                 2560
+    OnActivate                   'Report Message'
     OnCreate                     ''
     OnRepeat                     ''
     OnTouchMoving                ''
@@ -51,7 +51,7 @@ StaticText
     Font.Style                   []
     Height                       35
     Left                         16
-    Top                          12
+    Top                          8
     Transparent                  Yes
     Width                        160
     WordWrap                     No
@@ -60,12 +60,12 @@ end
     Name                         4Dbutton0
     Alias                        MN-START
     Height                       48
-    Left                         16
+    Left                         180
     Matrix                       -1
     Momentary                    No
     Size                         48x48
     Style                        Red
-    Top                          168
+    Top                          224
     Type                         Button01
     Width                        48
     OnChanged                    'Report Message'
@@ -83,8 +83,8 @@ StaticText
     Font.Size                    18
     Font.Style                   []
     Height                       29
-    Left                         80
-    Top                          176
+    Left                         120
+    Top                          228
     Transparent                  Yes
     Width                        51
     WordWrap                     Yes
@@ -110,16 +110,16 @@ UserLed
     Bevel.OuterStyle             Raised
     Bevel.Outerwidth             1
     Bevel.Visible                Yes
-    Height                       12
-    Left                         203
+    Height                       16
+    Left                         16
     OutlineColor                 BLACK
     OutlineWidth                 0
     PaletteEx.High1              clRed
     PaletteEx.High2              BLACK
     PaletteEx.Low1               0x000051
     PaletteEx.Low2               BLACK
-    Top                          26
-    Width                        20
+    Top                          228
+    Width                        25
     OnChanged                    ''
 end
 WinButton
@@ -183,8 +183,8 @@ StaticText
     Font.Size                    16
     Font.Style                   []
     Height                       25
-    Left                         16
-    Top                          236
+    Left                         20
+    Top                          48
     Transparent                  Yes
     Width                        19
     WordWrap                     Yes
@@ -197,21 +197,21 @@ Scope
     GraticuleVisible             Yes
     GraticuleXinc                10
     GraticuleYinc                10
-    Height                       90
-    Left                         12
-    RefreshIncrement             2
-    Top                          60
+    Height                       131
+    Left                         8
+    RefreshIncrement             1
+    Top                          80
     Trace1Color                  LIME
     Trace2Color                  BLUE
     Trace3Color                  RED
     Trace4Color                  FUCHSIA
-    Traces                       1
+    Traces                       2
     Width                        218
     Xmag                         0
     Yamp                         100
-    YLine                        88
+    YLine                        120
     YLineColor                   YELLOW
-    YLineVisible                 Yes
+    YLineVisible                 No
     Yoffset                      0
 end
 Strings
@@ -226,14 +226,59 @@ Strings
     Font.Italic                  No
     Font.Name                    '4D Font3 (8x12)'
     Font.Opaque                  Yes
-    Font.Size                    12
+    Font.Size                    16
     Font.Strikethrough           No
     Font.Underline               No
-    Left                         40
-    Strings                      0C\n
+    Left                         44
+    Strings                      ''
     StringsStyle                 Message
-    Top                          244
+    Top                          48
     Width                        52
+    OnChanged                    ''
+end
+Led
+    Name                         Led0
+    Alias                        WiFiLED
+    Active                       No
+    Caption                      WiFI
+    Color                        BLACK
+    Font.Color                   clWhite
+    Font.Effects                 []
+    Font.Name                    Arial
+    Font.Size                    8
+    Font.Style                   []
+    Glyphs                       (None)
+    Height                       38
+    Layout                       Left
+    LedType                      Rounded
+    Left                         188
+    Palette.High                 clRed
+    Palette.Low                  0x000051
+    Spacing                      0
+    Top                          8
+    Width                        49
+    OnChanged                    ''
+end
+Strings
+    Name                         Strings7
+    Alias                        Strings7
+    Alignment                    Center
+    BGcolor                      BLACK
+    Height                       23
+    FGcolor                      WHITE
+    Font.Bold                    No
+    Font.CharSet                 ANSI
+    Font.Italic                  No
+    Font.Name                    '4D Font3 (8x12)'
+    Font.Opaque                  Yes
+    Font.Size                    16
+    Font.Strikethrough           No
+    Font.Underline               No
+    Left                         128
+    Strings                      ''
+    StringsStyle                 Message
+    Top                          48
+    Width                        97
     OnChanged                    ''
 end
 Form
@@ -464,7 +509,7 @@ Form
 end
 WinButton
     Name                         Winbutton5
-    Alias                        Winbutton5
+    Alias                        APModeBtn
     Appearance.Alignment         Center
     Appearance.Layout            Left
     Appearance.PictureAlignment  Right
@@ -481,7 +526,7 @@ WinButton
     Font.Size                    8
     Font.Style                   []
     Height                       35
-    Left                         56
+    Left                         52
     Matrix                       -1
     Momentary                    Yes
     Picture                      (None)
@@ -503,7 +548,7 @@ WinButton
     StatusWhenOn.Size            8
     StatusWhenOn.Style           []
     StatusWhenOn.Visible         Yes
-    Top                          196
+    Top                          144
     Width                        120
     OnChanged                    'Report Message'
     OnTouchMoving                ''
@@ -515,7 +560,7 @@ Strings
     Alias                        WiFi-Info
     Alignment                    Left
     BGcolor                      BLACK
-    Height                       169
+    Height                       22
     FGcolor                      WHITE
     Font.Bold                    No
     Font.CharSet                 ANSI
@@ -525,10 +570,10 @@ Strings
     Font.Size                    12
     Font.Strikethrough           No
     Font.Underline               No
-    Left                         48
+    Left                         64
     Strings                      ''
     StringsStyle                 Message
-    Top                          16
+    Top                          20
     Width                        148
     OnChanged                    ''
 end
@@ -580,6 +625,107 @@ WinButton
     OnTouchPressed               ''
     OnTouchReleased              ''
 end
+Strings
+    Name                         Strings5
+    Alias                        IPString
+    Alignment                    Left
+    BGcolor                      BLACK
+    Height                       22
+    FGcolor                      WHITE
+    Font.Bold                    No
+    Font.CharSet                 ANSI
+    Font.Italic                  No
+    Font.Name                    '4D Font3 (8x12)'
+    Font.Opaque                  Yes
+    Font.Size                    12
+    Font.Strikethrough           No
+    Font.Underline               No
+    Left                         64
+    Strings                      ''
+    StringsStyle                 Message
+    Top                          52
+    Width                        148
+    OnChanged                    ''
+end
+StaticText
+    Name                         Statictext5
+    Alias                        Statictext5
+    Alignment                    Left
+    AutoSize                     Yes
+    Caption                      WiFi:
+    Color                        BLACK
+    Font.Color                   WHITE
+    Font.Effects                 []
+    Font.Name                    Tahoma
+    Font.Size                    12
+    Font.Style                   []
+    Height                       19
+    Left                         20
+    Top                          20
+    Transparent                  Yes
+    Width                        36
+    WordWrap                     Yes
+end
+StaticText
+    Name                         Statictext6
+    Alias                        Statictext6
+    Alignment                    Left
+    AutoSize                     Yes
+    Caption                      IP:
+    Color                        BLACK
+    Font.Color                   WHITE
+    Font.Effects                 []
+    Font.Name                    Tahoma
+    Font.Size                    12
+    Font.Style                   []
+    Height                       19
+    Left                         20
+    Top                          52
+    Transparent                  Yes
+    Width                        21
+    WordWrap                     Yes
+end
+Strings
+    Name                         Strings6
+    Alias                        HNString
+    Alignment                    Left
+    BGcolor                      BLACK
+    Height                       22
+    FGcolor                      WHITE
+    Font.Bold                    No
+    Font.CharSet                 ANSI
+    Font.Italic                  No
+    Font.Name                    '4D Font3 (8x12)'
+    Font.Opaque                  Yes
+    Font.Size                    12
+    Font.Strikethrough           No
+    Font.Underline               No
+    Left                         64
+    Strings                      ''
+    StringsStyle                 Message
+    Top                          80
+    Width                        148
+    OnChanged                    ''
+end
+StaticText
+    Name                         Statictext7
+    Alias                        Statictext7
+    Alignment                    Left
+    AutoSize                     Yes
+    Caption                      HN:
+    Color                        BLACK
+    Font.Color                   WHITE
+    Font.Effects                 []
+    Font.Name                    Tahoma
+    Font.Size                    12
+    Font.Style                   []
+    Height                       19
+    Left                         20
+    Top                          80
+    Transparent                  Yes
+    Width                        28
+    WordWrap                     Yes
+end
 Form
     Name                         Form3
     Alias                        CFG
@@ -596,20 +742,6 @@ Form
     OnTouchMoving                ''
     OnTouchPressed               ''
     OnTouchReleased              ''
-end
-Knob
-    Name                         Knob0
-    Alias                        CFG-SEL
-    Backimage                    (None)
-    BaseAngle                    45
-    Handleimage                  (None)
-    Left                         76
-    Maxvalue                     100
-    Minvalue                     0
-    Radius                       40
-    Top                          164
-    OnChanged                    'Report Message'
-    OnChanging                   ''
 end
 WinButton
     Name                         Winbutton7
@@ -674,12 +806,60 @@ Strings
     Font.Size                    12
     Font.Strikethrough           No
     Font.Underline               No
-    Left                         44
+    Left                         40
     Strings                      ''
     StringsStyle                 Message
-    Top                          84
+    Top                          72
     Width                        159
     OnChanged                    ''
+end
+WinButton
+    Name                         Winbutton9
+    Alias                        PramiterBtn
+    Appearance.Alignment         Center
+    Appearance.Layout            Left
+    Appearance.PictureAlignment  Right
+    Appearance.SimpleLayout      No
+    Appearance.Spacing           3
+    AutoSizeToPicture            No
+    Bevel                        Yes
+    BevelColor                   clWhite
+    Caption                      Next
+    Color                        clGray
+    Font.Color                   clWindowText
+    Font.Effects                 []
+    Font.Name                    Tahoma
+    Font.Size                    8
+    Font.Style                   []
+    Height                       35
+    Left                         60
+    Matrix                       -1
+    Momentary                    Yes
+    Picture                      (None)
+    StatusWhenOff.BGcolor        RED
+    StatusWhenOff.Caption        ''
+    StatusWhenOff.Glow           Yes
+    StatusWhenOff.Color          WHITE
+    StatusWhenOff.Effects        []
+    StatusWhenOff.Name           Tahoma
+    StatusWhenOff.Size           8
+    StatusWhenOff.Style          []
+    StatusWhenOff.Visible        Yes
+    StatusWhenOn.BGcolor         RED
+    StatusWhenOn.Caption         ''
+    StatusWhenOn.Glow            Yes
+    StatusWhenOn.Color           WHITE
+    StatusWhenOn.Effects         []
+    StatusWhenOn.Name            Tahoma
+    StatusWhenOn.Size            8
+    StatusWhenOn.Style           []
+    StatusWhenOn.Visible         Yes
+    Top                          160
+    Width                        111
+    OnChanged                    ''
+    OnTouchMoving                ''
+    OnTouchPressed               ''
+    OnTouchReleased              ''
 end
 Form
     Name                         Form4

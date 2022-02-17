@@ -4,7 +4,9 @@
 #include "Temperature.h"
 #include <Arduino.h>
 #include "TimerInterrupt_Generic.h"
+#include <WebSerial.h>
 
+char ProfileSelect = 0;
 float P_KE = 1.0;
 float I_KE = 1.0;
 float D_KE = 1.0;
@@ -43,7 +45,7 @@ float PIDLoop(float CurrentTemp, float SetTemp){
   float Ierror = 0.0;
   float Derror = 0.0;
   float Diff = 0.0;
-  Diff = CurrentTemp-SetTemp;
+  Diff = SetTemp-CurrentTemp;
   IntError += Diff;
   Perror = P_KE*(Diff);
   if (IntError > 2000){
@@ -81,12 +83,12 @@ void IRAM_ATTR TimerHandler(){
 }
 
 void StartISR(){
-    if (ITimer.attachInterruptInterval(TIMER_INTERVAL_MS * 1000, TimerHandler))
-  {
+  if (ITimer.attachInterruptInterval(TIMER_INTERVAL_MS * 1000, TimerHandler)){
     Serial.print(F("Starting  ITimer OK, millis() = "));
   }
-  else
+  else{
     Serial.println(F("Can't set ITimer correctly. Select another freq. or interval"));
+  }
 }
 
 void StopISR(){
@@ -100,7 +102,7 @@ enum ReflowStates previousState = NUM_STATES;
 unsigned long TimeStamp = 0;
 float SetTemp = 0;
 
-void RunProfile(int ProfileType){
+void RunProfile(){
   switch (RunProfileStat) {
     case off:
       // statements
@@ -120,12 +122,22 @@ void RunProfile(int ProfileType){
     case Warmupramp:
       if(previousState != RunProfileStat){  //Does it only need to run it once in this state, put the code here
         previousState = RunProfileStat;
-        SetTemp = TempRead();
+        SetTemp = TempRead();//Get starting point
+        WebSerial.println("Warmup Ramp");
       }
-      if(SetTemp < ActiveReflowData.PreheatTemp){
-        SetTemp += ActiveReflowData.PreheatRamp;
+      // if(SetTemp < ActiveReflowData.PreheatTemp){
+      //   SetTemp += ActiveReflowData.PreheatRamp;
+      // }
+      if(SetTemp < 120){
+        SetTemp = SetTemp + 2;
+        WebSerial.print("Ramp = ");
+        WebSerial.println(SetTemp);
       }
-      if((TempRead() < (ActiveReflowData.PreheatTemp+DELTA)) || (TempRead() > (ActiveReflowData.PreheatTemp-DELTA))){
+      // if((TempRead() < (ActiveReflowData.PreheatTemp+DELTA)) || (TempRead() > (ActiveReflowData.PreheatTemp-DELTA))){
+      //   //Dwell Time 
+      //   RunProfileStat = preheat;
+      // }
+      if(TempRead() > (120.0-DELTA)){
         //Dwell Time 
         RunProfileStat = preheat;
       }
@@ -134,17 +146,35 @@ void RunProfile(int ProfileType){
       if(previousState != RunProfileStat){  //Does it only need to run it once in this state, put the code here
         previousState = RunProfileStat;
         TimeStamp = millis();
+        WebSerial.println("Preheat dwel");
       }
-      if((millis()-TimeStamp) > ActiveReflowData.PreheatDwel){
+      // if((millis()-TimeStamp) > ActiveReflowData.PreheatDwel){
+      //   //Ramp to Dwel 
+      //   RunProfileStat = dwelramp;
+      // }
+      if((millis()-TimeStamp) > 20000){
         //Ramp to Dwel 
         RunProfileStat = dwelramp;
       }
       break;
     case dwelramp:
-      if(SetTemp < ActiveReflowData.FlowTemp){
-        SetTemp += ActiveReflowData.FlowRamp;
+      if(previousState != RunProfileStat){  //Does it only need to run it once in this state, put the code here
+        previousState = RunProfileStat;
+        WebSerial.println("dwel ramp");
       }
-      if((TempRead() < (ActiveReflowData.FlowTemp+DELTA)) || (TempRead() > (ActiveReflowData.FlowTemp-DELTA))){
+      // if(SetTemp < ActiveReflowData.FlowTemp){
+      //   SetTemp += ActiveReflowData.FlowRamp;
+      // }
+      if(SetTemp < 220){
+        SetTemp += 2;
+        WebSerial.print("Ramp = ");
+        WebSerial.println(SetTemp);
+      }
+      // if((TempRead() < (ActiveReflowData.FlowTemp+DELTA)) || (TempRead() > (ActiveReflowData.FlowTemp-DELTA))){
+      //   //Dwell Time 
+      //   RunProfileStat = dwel;
+      // }
+      if(TempRead() > (220.0-DELTA)){
         //Dwell Time 
         RunProfileStat = dwel;
       }
@@ -153,14 +183,20 @@ void RunProfile(int ProfileType){
       if(previousState != RunProfileStat){  //Does it only need to run it once in this state, put the code here
         previousState = RunProfileStat;
         TimeStamp = millis();
+        WebSerial.println("dwel time");
       }
-      if((millis()-TimeStamp) > ActiveReflowData.FlowDwel){
+      // if((millis()-TimeStamp) > ActiveReflowData.FlowDwel){
+      //   //Ramp to Dwel 
+      //   RunProfileStat = dwelramp;
+      // }
+      if((millis()-TimeStamp) > 20000){
         //Ramp to Dwel 
         RunProfileStat = dwelramp;
       }
       break;
     case coolramp:
       // statements
+      WebSerial.println("end time");
       StopISR();
       RunProfileStat = end;
       break;
@@ -175,12 +211,12 @@ void RunProfile(int ProfileType){
       // statements
       break;
   }
-  float Result = PIDLoop(TempRead(),SetTemp);
+  float Result = PIDLoop(GetOvenTemp(),SetTemp);
   Control = (int)Result;
-  Serial.println("The current State = " + String(RunProfileStat));
-  Serial.println("Current Set Temp = " + String(SetTemp)+" ^C");
-  Serial.println("Current Temp = " + String(TempRead())+" ^C");
-  Serial.println("PID OUTPUT = " + String(Result));
+  WebSerial.println("The current State = " + String(RunProfileStat));
+  WebSerial.println("Current Set Temp = " + String(SetTemp)+" ^C");
+  WebSerial.println("Current Temp = " + String(TempRead())+" ^C");
+  WebSerial.println("PID OUTPUT = " + String(Result));
 }
 
 void SetProfileValue(char DataSet, int Value){
@@ -230,4 +266,16 @@ void PrintReflowDataSet(){
 void ReflowStop(){
   StopISR();
   RunProfileStat = off;
+}
+
+void ReflowStart(){
+  RunProfileStat = verifyscript;
+}
+
+void ReflowSetProfile(char in){
+  ProfileSelect = in;
+}
+
+char ReflowReadProfile(){
+  return ProfileSelect;
 }

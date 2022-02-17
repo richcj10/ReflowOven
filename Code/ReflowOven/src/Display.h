@@ -5,5 +5,6 @@ void DisplaySetup();
 void DisplayUpdate();
 char GetGuiWiFi();
 char GetGuiReflow();
+void DisplayReset();
 
 #endif

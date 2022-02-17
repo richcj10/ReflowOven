@@ -3,5 +3,6 @@
 
 int TempSetup();
 float TempRead();
+float GetOvenTemp();
 
 #endif
