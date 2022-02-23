@@ -165,7 +165,7 @@ void RunProfile(){
       // if(SetTemp < ActiveReflowData.FlowTemp){
       //   SetTemp += ActiveReflowData.FlowRamp;
       // }
-      if(SetTemp < 220){
+      if(SetTemp < 150){
         SetTemp += 2;
         WebSerial.print("Ramp = ");
         WebSerial.println(SetTemp);
@@ -174,7 +174,7 @@ void RunProfile(){
       //   //Dwell Time 
       //   RunProfileStat = dwel;
       // }
-      if(TempRead() > (220.0-DELTA)){
+      if(TempRead() > (150.0-DELTA)){
         //Dwell Time 
         RunProfileStat = dwel;
       }
@@ -189,9 +189,9 @@ void RunProfile(){
       //   //Ramp to Dwel 
       //   RunProfileStat = dwelramp;
       // }
-      if((millis()-TimeStamp) > 20000){
+      if((millis()-TimeStamp) > 60000){
         //Ramp to Dwel 
-        RunProfileStat = dwelramp;
+        RunProfileStat = coolramp;
       }
       break;
     case coolramp:
@@ -213,10 +213,10 @@ void RunProfile(){
   }
   float Result = PIDLoop(GetOvenTemp(),SetTemp);
   Control = (int)Result;
-  WebSerial.println("The current State = " + String(RunProfileStat));
-  WebSerial.println("Current Set Temp = " + String(SetTemp)+" ^C");
-  WebSerial.println("Current Temp = " + String(TempRead())+" ^C");
-  WebSerial.println("PID OUTPUT = " + String(Result));
+  //WebSerial.println("The current State = " + String(RunProfileStat));
+  //WebSerial.println("Current Set Temp = " + String(SetTemp)+" ^C");
+  //WebSerial.println("Current Temp = " + String(TempRead())+" ^C");
+  //.println("PID OUTPUT = " + String(Result));
 }
 
 void SetProfileValue(char DataSet, int Value){

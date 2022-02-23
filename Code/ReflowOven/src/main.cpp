@@ -15,7 +15,9 @@
 // Replace with your network credentials
 const char* ssid = "Lights.Camera.Action";
 const char* password = "RR58fa!8";
-const char* hostname = "Reflow Oven";
+
+const char* WiFi_hostname = "ReflowOven";
+
 
 char WiFiStartupTimeout = 0;
 char WiFiTimeout = 0;
@@ -28,20 +30,23 @@ void setup() {
   pinMode(5,OUTPUT);
   DebugSetup(0);
   Serial.begin(115200);
-  //WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE, INADDR_NONE);
-  WiFi.hostname(hostname);
-  // Serial.println("Boot");
+  Serial.println("Boot");
   TempSetup();
   ProfileSetup();
   if(WifiConfigStatus() == 0){
        WiFi.softAP("ReflowOven");
   }
   else{
+    String routername = "Testing123";
+    WiFi.hostname((char *)routername.c_str());
+    wifi_station_set_hostname("Testing123");
+    Serial.print("Host Name: ");
+    Serial.println(WiFi.hostname());
     WiFi.begin(ssid, password);
      //WiFi.begin(GetSSID().c_str(), GetSSIDPassword().c_str());
     while (WiFi.status() != WL_CONNECTED) {
       delay(1000);
-      //Serial.println(".");
+      Serial.println(".");
       WiFiStartupTimeout = WiFiStartupTimeout +1;
       if(WiFiStartupTimeout > 10){
         WiFiTimeout = 1;
@@ -57,6 +62,7 @@ void setup() {
   //SetWifiConnect(1);
   // // Print ESP32 Local IP Address
   Serial.println(WiFi.localIP());
+  Serial.println(WiFi.hostname());
   WebserviceBegin();
   Serial.println("Weppage Started!");
   Serial.println("Project version: " + String(VERSION));
@@ -99,7 +105,7 @@ void setup() {
 
   // Start OTA server.
   DisplaySetup();
-  ArduinoOTA.setHostname(hostname);
+  ArduinoOTA.setHostname(IPHostname);
   ArduinoOTA.begin();
 }
 
@@ -117,7 +123,7 @@ void loop() {
   }
   if((UxTime + UX_CONTROL_LOOP_MS) < millis()){ //update every UX_CONTROL_LOOP_MS without blocking!
     UxTime = millis();
-    //DisplayUpdate();
+    DisplayUpdate();
   }
   if((ReadTime + SAMPLE_INTERVAL_MS) < millis()){ //update every UX_CONTROL_LOOP_MS without blocking!
     ReadTime = millis();

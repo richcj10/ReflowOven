@@ -1,6 +1,8 @@
 #ifndef DEFINE_H
 #define  DEFINE_H
 
+#define IPHostname "Reflow Oven"
+
 #define TIMER_INTERRUPT_DEBUG 0
 #define _TIMERINTERRUPT_LOGLEVEL_  0
 

@@ -4,6 +4,10 @@
 #include "Temperature.h"
 #include "Version.h"
 #include "Define.h"
+#include <WebSerial.h>
+
+char IP[] = "xxx.xxx.xxx.xxx"; 
+char SSID[25];
 
 char WiFiMode = 0;
 char ReflowMode = 0;
@@ -36,6 +40,13 @@ void DisplayUpdate(){
   ScreenDataupdate();
 }
 
+String IpAddressToString(const IPAddress& ipAddress) {
+  return String(ipAddress[0]) + String(".") +\
+  String(ipAddress[1]) + String(".") +\
+  String(ipAddress[2]) + String(".") +\
+  String(ipAddress[3])  ;
+}
+
 void ScreenDataupdate(){
   String Temp = String(TempRead(),2);
   int ScopeValue = map(TempRead(), 0, 300, 0, 100);
@@ -53,9 +64,12 @@ void ScreenDataupdate(){
     case 2:    // your hand is a few inches from the sensor
       if(previousPage != ScreenPage){  //Does it only need to run it once in this state, put the code here
         previousPage = ScreenPage;
-        genieWriteStr(1, "Lights.Camera.Action");
-        genieWriteStr(5, "192.168.5.1");
-        genieWriteStr(6, "ReflowOven");
+        WiFi.SSID().toCharArray(SSID, WiFi.SSID().length());
+        genieWriteStr(1,SSID);
+        IPAddress ip = WiFi.localIP();
+        ip.toString().toCharArray(IP, 16);
+        genieWriteStr(5,IP);
+        genieWriteStr(6, (char *)IPHostname);
       }
       if(ButtonPressed == 5){
         //WiFi AP Mode
@@ -126,19 +140,25 @@ char CheckScreenFB(){
       SreenData[0] = Serial.read();
       if(SreenData[0] == 6){
         ScreenAlive = 1;
+        WebSerial.println("Scrn ACK");
       }
       if(SreenData[0] == 7){
+        WebSerial.println("Scrn RCV");
         SreenData[1] = Serial.read();
+        WebSerial.println(SreenData[1]);
         if(SreenData[1] == 10){ //Fourm Comand
           ScreenPage = Serial.read();
+          WebSerial.println("Scrn Pg");
         }
         else if(SreenData[1] == 6){ //Btn Comand
           ButtonPressed = Serial.read();
+          WebSerial.println("Scrn BTN");
         }
         else if(SreenData[1] == 30){ //Spcl Button Command
           Serial.read();
           Serial.read();
           ReflowMode = Serial.read();
+          WebSerial.println("Scrn StartStop");
         }
       }
     }
