@@ -12,5 +12,6 @@ void ReflowStop();
 void ReflowStart();
 void ReflowSetProfile(char in);
 char ReflowReadProfile();
+char GetHeaterState();
 
 #endif

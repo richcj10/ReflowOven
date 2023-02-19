@@ -7,6 +7,7 @@
 #include <WebSerial.h>
 
 char ProfileSelect = 0;
+char HeaterState = 0;
 float P_KE = 1.0;
 float I_KE = 1.0;
 float D_KE = 1.0;
@@ -75,19 +76,21 @@ void IRAM_ATTR TimerHandler(){
   count++;
   if(count <= Control){
     digitalWrite(HEATERIO, HIGH);
+    HeaterState = 1;
   }
   if(count > 8){
     count = 0;
     digitalWrite(HEATERIO, LOW);
+    HeaterState = 0;
   }
 }
 
 void StartISR(){
   if (ITimer.attachInterruptInterval(TIMER_INTERVAL_MS * 1000, TimerHandler)){
-    Serial.print(F("Starting  ITimer OK, millis() = "));
+    WebSerial.print(F("Starting  ITimer OK, millis() = "));
   }
   else{
-    Serial.println(F("Can't set ITimer correctly. Select another freq. or interval"));
+    WebSerial.println(F("Can't set ITimer correctly. Select another freq. or interval"));
   }
 }
 
@@ -278,4 +281,8 @@ void ReflowSetProfile(char in){
 
 char ReflowReadProfile(){
   return ProfileSelect;
+}
+
+char GetHeaterState(){
+  return HeaterState;
 }

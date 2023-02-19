@@ -1,5 +1,6 @@
 {
-    "profilecount": 3,
+    "profilecount": 6,
+    "profilesel": 0,
     "profile": [
       {
         "profileID": 0,
@@ -27,15 +28,51 @@
       },
       {
         "profileID": 2,
-        "profileName": "Preheat Process",
-        "PreheatTemp": 120,
-        "PreheatRamp": 20,
-        "PreheatDwel": 30,
-        "FlowTemp": 120,
-        "FlowDwel": 1,
+        "profileName": "Filliment PLA",
+        "PreheatTemp": 40,
+        "PreheatRamp": 50,
+        "PreheatDwel": 150,
+        "FlowTemp": 50,
+        "FlowDwel": 150,
         "FlowRamp": 50,
-        "CoolRamp": 120,
-        "CoolStop": 120
+        "CoolRamp": 50,
+        "CoolStop": 20
+      },
+      {
+        "profileID": 3,
+        "profileName": "Filliment ABS-NY",
+        "PreheatTemp": 80,
+        "PreheatRamp": 50,
+        "PreheatDwel": 150,
+        "FlowTemp": 80,
+        "FlowDwel": 150,
+        "FlowRamp": 50,
+        "CoolRamp": 50,
+        "CoolStop": 20
+      },
+      {
+        "profileID": 4,
+        "profileName": "Poly Clay - PH",
+        "PreheatTemp": 60,
+        "PreheatRamp": 50,
+        "PreheatDwel": 10,
+        "FlowTemp": 290,
+        "FlowDwel": 10,
+        "FlowRamp": 50,
+        "CoolRamp": 1,
+        "CoolStop": 290
+      },
+      {
+        "profileID": 5,
+        "profileName": "Poly Clay",
+        "PreheatTemp": 290,
+        "PreheatRamp": 1,
+        "PreheatDwel": 150,
+        "FlowTemp": 290,
+        "FlowDwel": 80,
+        "FlowRamp": 50,
+        "CoolRamp": 50,
+        "CoolStop": 20
       }
     ]
 }

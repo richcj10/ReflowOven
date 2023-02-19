@@ -5,9 +5,12 @@
 #include "Version.h"
 #include "Define.h"
 #include <WebSerial.h>
+#include "ReflowControl.h"
+#include "Profiles.h"
 
 char IP[] = "xxx.xxx.xxx.xxx"; 
 char SSID[25];
+char buffer[20];
 
 char WiFiMode = 0;
 char ReflowMode = 0;
@@ -21,6 +24,7 @@ void ScreenDataupdate();
 char CheckScreenFB();
 void WriteObject(uint16_t object, uint16_t index, uint16_t data);
 char genieWriteStr(uint16_t index, char *string);
+unsigned char RequestPage();
 
 void DisplaySetup(){
 
@@ -50,19 +54,25 @@ String IpAddressToString(const IPAddress& ipAddress) {
 void ScreenDataupdate(){
   String Temp = String(TempRead(),2);
   int ScopeValue = map(TempRead(), 0, 300, 0, 100);
+  RequestPage();
   switch (ScreenPage) {
-    case 0:    // your hand is on the sensor
-      if(previousPage != ScreenPage){  //Does it only need to run it once in this state, put the code here
+    case 0: 
+      if(previousPage != ScreenPage){ 
         previousPage = ScreenPage;
+        unsigned char Prof = LastProfileRead();
+        GetProfileName(Prof).toCharArray(buffer, 20);
+        WebSerial.println("Setting Main Disp: ");
+        WebSerial.println(Prof);
+        genieWriteStr(7, buffer);
       }
-      //WriteObject(USERLED, 0, Led);
-      WriteObject(SCOPE, 0, ScopeValue);
-      genieWriteStr(0, (char*)Temp.c_str());
+      //WriteObject(USERLED, 0, GetHeaterState());
+     //WriteObject(SCOPE, 0, ScopeValue);
+      //genieWriteStr(0, (char*)Temp.c_str());
       break;
-    case 1:    // your hand is close to the sensor
+    case 1:   
       break;
-    case 2:    // your hand is a few inches from the sensor
-      if(previousPage != ScreenPage){  //Does it only need to run it once in this state, put the code here
+    case 2:  
+      if(previousPage != ScreenPage){  
         previousPage = ScreenPage;
         WiFi.SSID().toCharArray(SSID, WiFi.SSID().length());
         genieWriteStr(1,SSID);
@@ -72,19 +82,45 @@ void ScreenDataupdate(){
         genieWriteStr(6, (char *)IPHostname);
       }
       if(ButtonPressed == 5){
-        //WiFi AP Mode
         ButtonPressed = 0;
         
       }
       break;
-    case 3:    // your hand is nowhere near the sensor
-      if(previousPage != ScreenPage){  //Does it only need to run it once in this state, put the code here
+    case 3:   
+      if(previousPage != ScreenPage){  
         previousPage = ScreenPage;
-        genieWriteStr(2, "Reflow Profile");
+        WebSerial.println("CNG Scrn");
+        //genieWriteStr(2, "Reflow Profile");
       }
+         if(ButtonPressed == 10){
+          WebSerial.println("Scrn Up");
+          ButtonPressed = 0;
+          unsigned char MaxProf = ProfileCount(0);
+          unsigned char Prof = LastProfileRead();
+          if(Prof != MaxProf){
+            Prof = Prof + 1;
+            WebSerial.println(Prof);
+            SetLastProfileRead(Prof);
+            GetProfileName(Prof).toCharArray(buffer, 20);
+            genieWriteStr(2, buffer);
+          }
+         }
+         if(ButtonPressed == 9){
+          WebSerial.println("Scrn Dn");
+          ButtonPressed = 0;
+          unsigned char MaxProf = ProfileCount(0);
+          unsigned char Prof = LastProfileRead();
+          if(Prof != 0){
+            Prof = Prof - 1;
+            WebSerial.println(Prof);
+            SetLastProfileRead(Prof);
+            GetProfileName(Prof).toCharArray(buffer, 20);
+            genieWriteStr(2, buffer);
+          }
+         }
       break;
-    case 4:    // your hand is nowhere near the sensor
-      if(previousPage != ScreenPage){  //Does it only need to run it once in this state, put the code here
+    case 4:  
+      if(previousPage != ScreenPage){ 
         previousPage = ScreenPage;
         genieWriteStr(3, (char *)String(VERSION).c_str());
         genieWriteStr(4, (char *)String(BUILD_TIMESTAMP).c_str());
@@ -133,37 +169,88 @@ char genieWriteStr(uint16_t index, char *string){
 
 char CheckScreenFB(){
   char SreenData[20];
-  char Lenth;
-  if(Serial.available() >= 6){
+  unsigned char Lenth;
+  unsigned char pos = 0;
+  if(Serial.available() >= 2){
     Lenth = Serial.available();
-    for(char k=0;k<Lenth;k++){
-      SreenData[0] = Serial.read();
-      if(SreenData[0] == 6){
-        ScreenAlive = 1;
-        WebSerial.println("Scrn ACK");
+    for(unsigned char k=0;k<Lenth;k++){
+      SreenData[k] = Serial.read();
+      //WebSerial.print(SreenData[k]);
+    }
+    WebSerial.print(SreenData[pos]);
+    if(SreenData[pos] == 7){
+      WebSerial.println("Pct");
+      //SreenData[1] = Serial.read();
+      //WebSerial.println(SreenData[1]);
+      pos = pos + 1;
+      if(SreenData[pos] == 10){ //Fourm Comand
+        pos = pos + 1;
+        ScreenPage = SreenData[pos];
+        WebSerial.println("Scrn Pg");
+        return 1;
       }
-      if(SreenData[0] == 7){
-        WebSerial.println("Scrn RCV");
-        SreenData[1] = Serial.read();
-        WebSerial.println(SreenData[1]);
-        if(SreenData[1] == 10){ //Fourm Comand
-          ScreenPage = Serial.read();
-          WebSerial.println("Scrn Pg");
-        }
-        else if(SreenData[1] == 6){ //Btn Comand
-          ButtonPressed = Serial.read();
-          WebSerial.println("Scrn BTN");
-        }
-        else if(SreenData[1] == 30){ //Spcl Button Command
-          Serial.read();
-          Serial.read();
-          ReflowMode = Serial.read();
-          WebSerial.println("Scrn StartStop");
-        }
+      else if(SreenData[1] == 6){ //Btn Comand
+        pos = pos + 1;
+        ButtonPressed = SreenData[pos];
+        WebSerial.println("Scrn BTN");
+        return 1;
+      }
+      else if(SreenData[1] == 30){ //Spcl Button Command
+        //Serial.read();
+        //Serial.read();
+        pos = pos + 3;
+        ReflowMode = SreenData[pos];
+        WebSerial.println("Scrn StartStop");
+        return 1;
+      }
+      return 0;
+    }
+    else{
+      if(pos < Lenth){
+        pos++;
       }
     }
   }
-  return 1;
+  return 0;
+}
+
+unsigned char RequestPage(){
+    char Data[20];
+    unsigned char pos = 0;
+    unsigned char pg = 0;
+    Serial.write(0);
+    Serial.write(10);
+    Serial.write(0);
+    Serial.write(10);
+    while (1)
+    {
+      if(Serial.available() >= 6){
+        unsigned char l = Serial.available();
+        for(unsigned char k=0;k<l;k++){
+          Data[k] = Serial.read();
+          //WebSerial.print(SreenData[k]);
+        }
+        if(Data[pos] == 5){
+          WebSerial.println("Scn Pct");
+          pos = pos + 1;
+          if(Data[pos] == 10){ //Fourm Comand
+            pos = pos + 3;
+            pg = Data[pos];
+            WebSerial.println("Scrn Pg rcvd");
+            break;
+          }
+        }
+        else{
+          if(pos < l){
+            pos++;
+          }
+          else{
+            break;
+          }        
+        }
+      }
+    }
+  return pg;
 }
 
 char GetGuiWiFi(){

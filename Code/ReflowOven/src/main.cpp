@@ -11,12 +11,13 @@
 #include <ESP8266mDNS.h>
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h>
+#include <spi_flash.h>
 
 // Replace with your network credentials
 const char* ssid = "Lights.Camera.Action";
 const char* password = "RR58fa!8";
 
-const char* WiFi_hostname = "ReflowOven";
+String WiFi_hostname = "ReflowOven";
 
 
 char WiFiStartupTimeout = 0;
@@ -37,18 +38,14 @@ void setup() {
        WiFi.softAP("ReflowOven");
   }
   else{
-    String routername = "Testing123";
-    WiFi.hostname((char *)routername.c_str());
-    wifi_station_set_hostname("Testing123");
-    Serial.print("Host Name: ");
-    Serial.println(WiFi.hostname());
-    WiFi.begin(ssid, password);
-     //WiFi.begin(GetSSID().c_str(), GetSSIDPassword().c_str());
+    WiFi.hostname(WiFi_hostname.c_str());
+    //WiFi.begin(ssid, password);
+    WiFi.begin(GetSSID().c_str(), GetSSIDPassword().c_str());
     while (WiFi.status() != WL_CONNECTED) {
       delay(1000);
       Serial.println(".");
       WiFiStartupTimeout = WiFiStartupTimeout +1;
-      if(WiFiStartupTimeout > 10){
+      if(WiFiStartupTimeout > 50){
         WiFiTimeout = 1;
         break;
       }
@@ -61,15 +58,15 @@ void setup() {
   Serial.println("Ready");
   //SetWifiConnect(1);
   // // Print ESP32 Local IP Address
-  Serial.println(WiFi.localIP());
-  Serial.println(WiFi.hostname());
+  //Serial.println(WiFi.localIP());
+  //Serial.println(WiFi.hostname());
   WebserviceBegin();
   Serial.println("Weppage Started!");
   Serial.println("Project version: " + String(VERSION));
   Serial.println("Build timestamp:" + String(BUILD_TIMESTAMP));
-  // //LoadProfileData(1);
+  SetLastProfileRead(1);
   // //GetProfileNames();
-  // Serial.println(WiFi.localIP());
+  //Serial.println(WiFi.localIP());
 
   ArduinoOTA.onStart([]() {
     String type;
@@ -104,6 +101,9 @@ void setup() {
   });
 
   // Start OTA server.
+  
+  
+  
   DisplaySetup();
   ArduinoOTA.setHostname(IPHostname);
   ArduinoOTA.begin();
@@ -115,11 +115,21 @@ unsigned long ReadTime = millis();
 
 char OvenState = 0;
 
+char kj = 0;
+
 void loop() {
   ArduinoOTA.handle();
   if((ReflowTime + OVEN_CONTROL_LOOP_MS) < millis()){ //update every OVEN_CONTROL_LOOP_MS without blocking!
     ReflowTime = millis();
-    RunProfile();
+    //RunProfile();
+    //Serial.println(ProfileCount(0), DEC);
+    //if(kj >= ProfileCount(0)){
+    //  kj = 0;
+    //}
+    //Serial.println(GetProfileName(kj)); 
+    //LoadProfileData(kj);
+    //kj = kj +1;
+    //Serial.println(kj, DEC);
   }
   if((UxTime + UX_CONTROL_LOOP_MS) < millis()){ //update every UX_CONTROL_LOOP_MS without blocking!
     UxTime = millis();

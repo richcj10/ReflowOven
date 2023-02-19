@@ -3,14 +3,15 @@
 #include <ESPAsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <WebSerial.h>
-#include "ArduinoJson.h"
+#include <ArduinoJson.h>
 #include <LittleFS.h>
 #include "Temperature.h"
 #include "Profiles.h"
 #include "Version.h"
 
 StaticJsonDocument<200> jsonDocTx;
-static char output[512];
+StaticJsonDocument<200> jsonDocRx;
+//static char output[512];
 
 // Create AsyncWebServer object on port 80
 AsyncWebServer server(80);
@@ -18,7 +19,7 @@ AsyncWebSocket ws("/ws");
 const int ledPin = 5;
 
 char Status = 0;
-
+const char* Type = 0;
 // Stores LED state
 String ledState;
 
@@ -29,31 +30,37 @@ const char* PARAM_INPUT_2 = "pswd";
 String processor(const String& var);
 String getTemperatureHTML();
 
-void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
+char handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
   AwsFrameInfo *info = (AwsFrameInfo*)arg;
   if (info->final && info->index == 0 && info->len == len && info->opcode == WS_TEXT) {
-    //const uint8_t size = JSON_OBJECT_SIZE(1);
-    StaticJsonDocument<200> json;
-    DeserializationError err = deserializeJson(json, data);
-    if (err) {
-      //Serial.print(F("deserializeJson() failed with code "));
-      //Serial.println(err.c_str());
-      return;
+    DeserializationError error = deserializeJson(jsonDocRx, data);
+    if (error) {
+      //Serial.print(F("deserializeJson() failed: "));
+      //.println(error.f_str());
+      return 0;
     }
+    //const uint8_t size = JSON_OBJECT_SIZE(1);
+    //StaticJsonDocument<200> json;
+    //DeserializationError err = deserializeJson(json, data);
+    //if (err) {
+    //  //Serial.print(F("deserializeJson() failed with code "));
+    //  //Serial.println(err.c_str());
+    //  return;
+    //}
     //serializeJsonPretty(json, Serial);
-    char Type = json["TYP"];
-    if(Type == 1){ //WiFi Json Array Recived 
+    Type = jsonDocRx["TYP"];
+    if(strcmp(Type, "1") == 0){ //WiFi Json Array Recived 
       //Serial.println("Type WiFi");
-      const char* WiFiSSID = json["WiFiSSID"];
-      const char* WiFiPSWD = json["WiFiPSWD"];
-      Serial.println(WiFiSSID);
-      Serial.println(WiFiPSWD);
+      const char* WiFiSSID = jsonDocRx["WiFiSSID"];
+      const char* WiFiPSWD = jsonDocRx["WiFiPSWD"];
+      WebSerial.println(WiFiSSID);
+      WebSerial.println(WiFiPSWD);
       saveConfig(String(WiFiSSID),String(WiFiPSWD));
     }
-    if(Type == 2){ //Reflow Json Array Recived 
-      Serial.print("Pro: "); 
-      char ProfileNumber = json["Profile"];
-      Serial.println(ProfileNumber); 
+    if(strcmp(Type, "2") == 0){ //Reflow Json Array Recived 
+      WebSerial.print("Pro: "); 
+      const char*  ProfileNumber = jsonDocRx["Profile"];
+      WebSerial.println(ProfileNumber); 
       //TODO: add parse code
       //TODO: add code to pass args to update or add profile      
       // jsonDocTx.clear();
@@ -69,56 +76,56 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
       //   Serial.printf("...queue is full\r\n");
       // }
     }
-    if(Type == 3){ //Send Reflow Profile Names 
+/*     if(strcmp(Type, "3") == 0){ //Send temp
       //Serial.println("Temp"); 
       jsonDocTx.clear();
       jsonDocTx["CNTTMP"] = GetOvenTemp();
 
-      serializeJson(jsonDocTx, output, 512);
+      //serializeJson(jsonDocTx, output, 512);
 
-      Serial.printf("Sending: %s", output);
-      if (ws.availableForWriteAll()) {
-        ws.textAll(output);
+      //Serial.printf("Sending: %s", output);
+      //if (ws.availableForWriteAll()) {
+      //  ws.textAll(output);
         //Serial.printf("WS Send TMP\r\n");
-      } 
+      //} 
       //else {
         //Serial.printf("...queue is full\r\n");
       //}
-    }
-    if(Type == 4){ //Send Reflow Profile Names 
+    } */
+/*     if(strcmp(Type, "4") == 0){ //Send Reflow Profile Names 
       //Serial.println("Type Verson"); 
       jsonDocTx.clear();
       jsonDocTx["VER"] = String(VERSION);
 
-      serializeJson(jsonDocTx, output, 512);
+      //serializeJson(jsonDocTx, output, 512);
 
-      Serial.printf("Sending: %s", output);
-      if (ws.availableForWriteAll()) {
-        ws.textAll(output);
+      //Serial.printf("Sending: %s", output);
+      //if (ws.availableForWriteAll()) {
+      //  ws.textAll(output);
         //Serial.printf("WS Send Ver\r\n");
-      } 
-      else {
+      //} 
+      //else {
         //Serial.printf("...queue is full\r\n");
-      }
-    }
-    if(Type == 5){ //StartProfile
+      //}
+    } */
+/*     if(strcmp(Type, "5") == 0){ //StartProfile
       Status = !Status;
       //Serial.println("Start Profile"); 
       jsonDocTx.clear();
       jsonDocTx["RESP"] = Status;
 
-      serializeJson(jsonDocTx, output, 512);
+      //serializeJson(jsonDocTx, output, 512);
 
-      Serial.printf("Sending: %s", output);
-      if (ws.availableForWriteAll()) {
-        ws.textAll(output);
+      //WebSerial.print("Sending: %s", output);
+      //if (ws.availableForWriteAll()) {
+        //ws.textAll(output);
         //Serial.printf("WS Send Ver\r\n");
-      } 
-      else {
+      //} 
+      //else {
         //Serial.printf("...queue is full\r\n");
-      }
-    }
-    if(Type == 6){ //StartProfile
+      //}
+    } */
+/*     if(strcmp(Type, "6") == 0){ //StartProfile
       //Serial.println("Profile Name"); 
 
       if (ws.availableForWriteAll()) {
@@ -126,10 +133,11 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
         //Serial.printf("WS Send Ver\r\n");
       } 
       else {
-        Serial.printf("...queue is full\r\n");
+        WebSerial.println("...queue is full");
       }
-    }
+    } */
   }
+  return 1;
 }
 
 void onEvent(AsyncWebSocket       *server,

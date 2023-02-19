@@ -1,4 +1,4 @@
-// File generated 2/8/2022 9:24:57 PM
+// File generated 2/14/2023 7:47:56 PM
 // Warning! This is a generated file, any manual changes will be
 // lost during the next generation.
 
@@ -25,23 +25,25 @@
     i4Dbutton0      // offset 0x2C00
     iStatictext1    // offset 0x7600
     iUserled0       // offset 0x8200
-    iWinbutton0     // offset 0x8A00
-    iStatictext2    // offset 0xCC00
-    iLed0           // offset 0xD000
-    iWinbutton1     // offset 0xEE00
-    iWinbutton2     // offset 0x13000
-    iWinbutton3     // offset 0x17200
-    iWinbutton4     // offset 0x1B400
-    iWinbutton5     // offset 0x1F600
-    iWinbutton6     // offset 0x23800
-    iStatictext5    // offset 0x27A00
-    iStatictext6    // offset 0x28000
-    iStatictext7    // offset 0x28400
-    iWinbutton7     // offset 0x28A00
-    iWinbutton9     // offset 0x2CC00
-    iWinbutton8     // offset 0x30A00
-    iStatictext3    // offset 0x34800
-    iStatictext4    // offset 0x37A00
+    iWinbutton0     // offset 0x9000
+    iStatictext2    // offset 0xD200
+    iLed0           // offset 0xD600
+    iStatictext8    // offset 0xFE00
+    iWinbutton1     // offset 0x10800
+    iWinbutton2     // offset 0x14A00
+    iWinbutton3     // offset 0x18C00
+    iWinbutton4     // offset 0x1CE00
+    iWinbutton5     // offset 0x21000
+    iWinbutton6     // offset 0x25200
+    iStatictext5    // offset 0x29400
+    iStatictext6    // offset 0x29A00
+    iStatictext7    // offset 0x29E00
+    iWinbutton7     // offset 0x2A400
+    iWinbutton9     // offset 0x2E600
+    iWinbutton10    // offset 0x31600
+    iWinbutton8     // offset 0x34800
+    iStatictext3    // offset 0x38600
+    iStatictext4    // offset 0x3B800
 #END
 
 

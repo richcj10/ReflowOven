@@ -26,25 +26,25 @@ int TempSetup(){
 
   //check if the sensor is connected
   if(tempSensor.isConnected()){
-    Serial.println("Device will acknowledge!");
+    //Serial.println("Device will acknowledge!");
     TempMode = 1;
   }
   else {
-    //Serial.println("Device did not acknowledge! Freezing.");
-    //while(1); //hang forever
+    Serial.println("Bad TC Device: Freezing.");
+    while(1); //hang forever
     TempMode = -1;
     return 0;
   }
 
   //check if the Device ID is correct
   if(tempSensor.checkDeviceID()){
-    Serial.println("Device ID is correct!");     
+    //Serial.println("Device ID is correct!");     
     TempMode = 2;  
     TempFilterSetup(); 
   }
   else {
-    //Serial.println("Device ID is not correct! Freezing.");
-    //while(1); //hang forever
+    Serial.println("Device ID Bad! Freezing.");
+    while(1); //hang forever
     TempMode = -2;
     return 0;
   }

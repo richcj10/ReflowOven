@@ -7,8 +7,10 @@
 String WiFiSSID;
 String WifiPassword;
 
-char WiFiConfig = 1;
-char ReflowProfile = 0;
+unsigned char WiFiConfig = 1;
+unsigned char ReflowProfile = 0;
+unsigned char ReflowProfileCount = 0;
+unsigned char ReflowProfileSelect = 0;
 char ProfileNames[MAXPROFILECOUNT][NAMELENTH]; 
 
 bool loadWiFiConfig();
@@ -21,7 +23,7 @@ void ProfileSetup(){
   }
   listDir("/");
 
-  saveConfig("Lights.Camera.Action", "RR58fa!8");
+  //saveConfig("Lights.Camera.Action", "RR58fa!8");
   //strcpy(ProfileNames[0], "New");
   if(loadWiFiConfig()){
       Serial.println("Wifi Config Found");
@@ -29,16 +31,11 @@ void ProfileSetup(){
   else{
       WiFiConfig = 0;
   }
-  LoadProfile();
+  LoadProfileName();
 }
 
-
-void SaveProfile(String Name, float PreheatTemp, float PreheatRamp, float PreheatDwel, float FlowTemp, float FlowDwel, float FlowRamp, float CoolRamp, float CoolOff){
-
-}
-
-void LoadProfile(){
-  Serial.print(F("Open Profile "));
+void LoadProfileName(){
+  Serial.println(F("Open Profile "));
   File file = LittleFS.open("/Profiles.json", "r");
   if (!file){
     Serial.print(F("Open file failed: "));
@@ -55,9 +52,10 @@ void LoadProfile(){
     Serial.println(error.f_str());
     return;
   }
-  int Count = doc["profilecount"];
-  //Serial.print("Profile Count = ");
-  //Serial.println(Count);
+
+  ReflowProfileSelect = doc["profilesel"];
+  ReflowProfileCount = doc["profilecount"];
+
   for (JsonObject module : doc["profile"].as<JsonArray>())
   {
     const char* Name = module["profileName"];//.as<String>();
@@ -66,10 +64,10 @@ void LoadProfile(){
     ReflowProfile += 1;
   }
   char value = 0;
-  for(char i = 0;i<ReflowProfile;i++){
-    for(char k = 0;k<NAMELENTH;k++){
+  for(unsigned char i = 0;i<ReflowProfile;i++){
+    for(unsigned char k = 0;k<NAMELENTH;k++){
       value = ProfileNames[i][k];
-      if(value != NULL){
+      if(value != '\0'){
         Serial.print(value);
       }
       else{
@@ -80,21 +78,19 @@ void LoadProfile(){
   }
 }
 
-void writeFile(const char * path, const char * message) {
-  Serial.printf("Writing file: %s\n", path);
+char SaveProfile(String Name, float PreheatTemp, float PreheatRamp, float PreheatDwel, float FlowTemp, float FlowDwel, float FlowRamp, float CoolRamp, float CoolOff){
+/*   StaticJsonDocument<200> doc;
+  doc["SSID"] = SSID;
+  doc["PSWD"] = Password;
 
-  File file = LittleFS.open(path, "w");
-  if (!file) {
-    Serial.println("Failed to open file for writing");
-    return;
+  File configFile = LittleFS.open("/WiFi.json", "w");
+  if (!configFile) {
+    //Serial.println("Failed to open config file for writing");
+    return false;
   }
-  if (file.print(message)) {
-    Serial.println("File written");
-  } else {
-    Serial.println("Write failed");
-  }
-  delay(2000); // Make sure the CREATE and LASTWRITE times are different
-  file.close();
+
+  serializeJson(doc, configFile); */
+  return true;
 }
 
 void listDir(const char * dirname) {
@@ -108,13 +104,7 @@ void listDir(const char * dirname) {
     Serial.print(root.fileName());
     Serial.print("  SIZE: ");
     Serial.println(file.size());
-    //time_t cr = file.getCreationTime();
-    //time_t lw = file.getLastWrite();
     file.close();
-    //struct tm * tmstruct = localtime(&cr);
-    //Serial.printf("    CREATION: %d-%02d-%02d %02d:%02d:%02d\n", (tmstruct->tm_year) + 1900, (tmstruct->tm_mon) + 1, tmstruct->tm_mday, tmstruct->tm_hour, tmstruct->tm_min, tmstruct->tm_sec);
-    //tmstruct = localtime(&lw);
-    //Serial.printf("  LAST WRITE: %d-%02d-%02d %02d:%02d:%02d\n", (tmstruct->tm_year) + 1900, (tmstruct->tm_mon) + 1, tmstruct->tm_mday, tmstruct->tm_hour, tmstruct->tm_min, tmstruct->tm_sec);
   }
 }
 
@@ -143,14 +133,16 @@ bool loadWiFiConfig() {
   }
 
   const char* strA = doc["SSID"];
-  std::string WiFiSSID = strA;
+  WiFiSSID = strA;
+  //std::string WiFiSSID = strA;
   const char* strB = doc["PSWD"];
-  std::string WifiPassword = strB;
+  //std::string WifiPassword = strB;
+  WifiPassword = strB;
 
-  //Serial.print("Loaded WiFi: ");
-  //Serial.println(WiFiSSID.c_str());
-  //Serial.print("Loaded pswd: ");
-  //Serial.println(WifiPassword.c_str());
+  Serial.print("Loaded WiFi: ");
+  Serial.println(WiFiSSID.c_str());
+  Serial.print("Loaded pswd: ");
+  Serial.println(WifiPassword.c_str());
   return true;
 }
 
@@ -158,6 +150,8 @@ bool saveConfig(String SSID, String Password){
   StaticJsonDocument<200> doc;
   doc["SSID"] = SSID;
   doc["PSWD"] = Password;
+
+  LittleFS.remove("/WiFi.json");
 
   File configFile = LittleFS.open("/WiFi.json", "w");
   if (!configFile) {
@@ -207,6 +201,30 @@ void LoadProfileData(char ProfileNumber){
   SetProfileValue(COOLRMP,Value);
   Value = int(array[ProfileNumber]["CoolStop"]);
   SetProfileValue(COOLSTOP,Value);
+  SetLastProfileRead(ProfileNumber);
+}
+
+String GetProfileNames(){
+  char value = 0;
+  String StringValue ="{\"data\":[";
+
+  
+  //String StringValue = "{PName:";
+  for(unsigned char i = 0;i<ReflowProfile;i++){
+    for(unsigned char k = 0;k<NAMELENTH;k++){
+      value = ProfileNames[i][k];
+      if(value != '\0'){
+        StringValue += String(value);
+      }
+      else{
+        StringValue += ",";
+        break;
+      }
+    }
+  }
+  StringValue += "New]}";
+  //Serial.println(StringValue);
+  return StringValue;
 }
 
 String GetSSID(){
@@ -221,24 +239,26 @@ char WifiConfigStatus(){
     return WiFiConfig;
 }
 
+/* 
+0 -Reflow Profile - self Count
+1 -Reflow Profile Count - FS Count 
+*/
+unsigned char ProfileCount(char i){
+  if(i == 0) return ReflowProfile;
+  if(i == 1) return ReflowProfileCount;
+  return -1;
+}
 
-String GetProfileNames(){
-  char value = 0;
-  String StringValue ="{\"data\":[";//48.756080,2.302038]}";
-  //String StringValue = "{PName:";
-  for(char i = 0;i<ReflowProfile;i++){
-    for(char k = 0;k<NAMELENTH;k++){
-      value = ProfileNames[i][k];
-      if(value != NULL){
-        StringValue += String(value);
-      }
-      else{
-        StringValue += ",";
-        break;
-      }
-    }
-  }
-  StringValue += "New]}";
-  //Serial.println(StringValue);
-  return StringValue;
+unsigned char LastProfileRead(){
+  return ReflowProfileSelect;
+}
+
+void SetLastProfileRead(unsigned char i){
+  //return 0;
+  ReflowProfileSelect = i;
+}
+
+String GetProfileName(unsigned char j){
+  String myString = String(ProfileNames[j]);
+  return myString;
 }
