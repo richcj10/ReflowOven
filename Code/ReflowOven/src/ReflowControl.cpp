@@ -8,21 +8,21 @@
 
 char ProfileSelect = 0;
 char HeaterState = 0;
-float P_KE = 1.0;
-float I_KE = 1.0;
-float D_KE = 1.0;
+float P_KE = 3.5;
+float I_KE = -0.01;
+float D_KE = 5.5;
 float IntError = 0;
 float DivError = 0;
 
 struct ReflowConfig {
-  int PreheatTemp = 0;
-  int PreheatRamp = 0;
-  unsigned long PreheatDwel = 0;
-  int FlowTemp = 0;
-  unsigned long FlowDwel = 0;
-  int FlowRamp = 0;
+  int PreheatTemp = 145;
+  float PreheatRamp = 5;
+  unsigned long PreheatDwel = 60;
+  int FlowTemp = 145;
+  unsigned long FlowDwel = 3600;
+  float FlowRamp = 1;
   int CoolRamp = 0;
-  int CoolStop = 0;
+  int CoolStop = 30;
 };
 
 enum ReflowStates {
@@ -65,8 +65,10 @@ float PIDLoop(float CurrentTemp, float SetTemp){
   if(PID > 8){
     PID = 8;
   }
+  Serial.print(Perror);
+  Serial.print(Ierror);
+  Serial.print(DivError);
   return PID;
-  //Serial.print(PID);
 }
 
 volatile int Control = 0;
@@ -87,11 +89,12 @@ void IRAM_ATTR TimerHandler(){
 
 void StartISR(){
   if (ITimer.attachInterruptInterval(TIMER_INTERVAL_MS * 1000, TimerHandler)){
-    WebSerial.print(F("Starting  ITimer OK, millis() = "));
+    //WebSerial.print(F("Starting  ITimer OK, millis() = "));
+    Serial.println("ISR OK");
   }
-  else{
-    WebSerial.println(F("Can't set ITimer correctly. Select another freq. or interval"));
-  }
+  //else{
+    //WebSerial.println(F("Can't set ITimer correctly. Select another freq. or interval"));
+  //}
 }
 
 void StopISR(){
@@ -116,8 +119,8 @@ void RunProfile(){
       RunProfileStat = starting;
       break;
     case starting:
-      LoadProfileData(1);
-      PrintReflowDataSet();
+      //LoadProfileData(1);
+      //PrintReflowDataSet();
       StartISR();
       RunProfileStat = Warmupramp;
       // statements
@@ -126,21 +129,18 @@ void RunProfile(){
       if(previousState != RunProfileStat){  //Does it only need to run it once in this state, put the code here
         previousState = RunProfileStat;
         SetTemp = TempRead();//Get starting point
-        WebSerial.println("Warmup Ramp");
+        Serial.println("Warmup Ramp");
       }
-      // if(SetTemp < ActiveReflowData.PreheatTemp){
-      //   SetTemp += ActiveReflowData.PreheatRamp;
-      // }
-      if(SetTemp < 120){
-        SetTemp = SetTemp + 2;
-        WebSerial.print("Ramp = ");
-        WebSerial.println(SetTemp);
+      if(SetTemp < ActiveReflowData.PreheatTemp){
+        SetTemp += ActiveReflowData.PreheatRamp;
+        Serial.print("Ramp = ");
+        Serial.println(SetTemp);
       }
       // if((TempRead() < (ActiveReflowData.PreheatTemp+DELTA)) || (TempRead() > (ActiveReflowData.PreheatTemp-DELTA))){
       //   //Dwell Time 
       //   RunProfileStat = preheat;
       // }
-      if(TempRead() > (120.0-DELTA)){
+      if(TempRead() > (ActiveReflowData.PreheatTemp-DELTA)){
         //Dwell Time 
         RunProfileStat = preheat;
       }
@@ -149,13 +149,13 @@ void RunProfile(){
       if(previousState != RunProfileStat){  //Does it only need to run it once in this state, put the code here
         previousState = RunProfileStat;
         TimeStamp = millis();
-        WebSerial.println("Preheat dwel");
+        Serial.println("Preheat dwel");
       }
       // if((millis()-TimeStamp) > ActiveReflowData.PreheatDwel){
       //   //Ramp to Dwel 
       //   RunProfileStat = dwelramp;
       // }
-      if((millis()-TimeStamp) > 20000){
+      if((millis()-TimeStamp) > ActiveReflowData.PreheatDwel*1000){
         //Ramp to Dwel 
         RunProfileStat = dwelramp;
       }
@@ -163,21 +163,23 @@ void RunProfile(){
     case dwelramp:
       if(previousState != RunProfileStat){  //Does it only need to run it once in this state, put the code here
         previousState = RunProfileStat;
-        WebSerial.println("dwel ramp");
+        Serial.println("dwel ramp");
       }
       // if(SetTemp < ActiveReflowData.FlowTemp){
       //   SetTemp += ActiveReflowData.FlowRamp;
       // }
-      if(SetTemp < 150){
-        SetTemp += 2;
-        WebSerial.print("Ramp = ");
-        WebSerial.println(SetTemp);
+      if(SetTemp < ActiveReflowData.FlowTemp){
+        if(ActiveReflowData.FlowTemp < SetTemp){
+          SetTemp += ActiveReflowData.FlowRamp;
+          Serial.print("Ramp = ");
+          Serial.println(SetTemp);
+        }
       }
       // if((TempRead() < (ActiveReflowData.FlowTemp+DELTA)) || (TempRead() > (ActiveReflowData.FlowTemp-DELTA))){
       //   //Dwell Time 
       //   RunProfileStat = dwel;
       // }
-      if(TempRead() > (150.0-DELTA)){
+      if(TempRead() > (ActiveReflowData.FlowTemp-DELTA)){
         //Dwell Time 
         RunProfileStat = dwel;
       }
@@ -186,20 +188,20 @@ void RunProfile(){
       if(previousState != RunProfileStat){  //Does it only need to run it once in this state, put the code here
         previousState = RunProfileStat;
         TimeStamp = millis();
-        WebSerial.println("dwel time");
+        Serial.println("dwel time");
       }
       // if((millis()-TimeStamp) > ActiveReflowData.FlowDwel){
       //   //Ramp to Dwel 
       //   RunProfileStat = dwelramp;
       // }
-      if((millis()-TimeStamp) > 60000){
+      if((millis()-TimeStamp) > ActiveReflowData.FlowDwel*1000){
         //Ramp to Dwel 
         RunProfileStat = coolramp;
       }
       break;
     case coolramp:
       // statements
-      WebSerial.println("end time");
+      Serial.println("end time");
       StopISR();
       RunProfileStat = end;
       break;
@@ -216,10 +218,10 @@ void RunProfile(){
   }
   float Result = PIDLoop(GetOvenTemp(),SetTemp);
   Control = (int)Result;
-  //WebSerial.println("The current State = " + String(RunProfileStat));
-  //WebSerial.println("Current Set Temp = " + String(SetTemp)+" ^C");
-  //WebSerial.println("Current Temp = " + String(TempRead())+" ^C");
-  //.println("PID OUTPUT = " + String(Result));
+  Serial.println("The current State = " + String(RunProfileStat));
+  Serial.println("Current Set Temp = " + String(SetTemp)+" ^C");
+  Serial.println("Current Temp = " + String(TempRead())+" ^C");
+  Serial.println("PID OUTPUT = " + String(Result));
 }
 
 void SetProfileValue(char DataSet, int Value){
