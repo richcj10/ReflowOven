@@ -80,7 +80,7 @@ float TempRead(){
     TempTotal = TempTotal + TempBoxCar[BOX_CAR_SIZE];
     //Serial.print("Total Temp = ");
     //Serial.println(TempTotal);
-    ReturnTemp = (TempTotal/BOX_CAR_SIZE+1);
+    ReturnTemp = (TempTotal/BOX_CAR_SIZE+1)-50;
     //Serial.print(" Temp = ");
     //Serial.println(ReturnTemp);
     //Serial.print(" °C   Ambient: ");

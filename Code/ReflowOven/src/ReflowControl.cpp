@@ -8,18 +8,18 @@
 
 char ProfileSelect = 0;
 char HeaterState = 0;
-float P_KE = 3.5;
+float P_KE = 1.7;
 float I_KE = -0.01;
-float D_KE = 5.5;
+float D_KE = 1.6;
 float IntError = 0;
 float DivError = 0;
 
 struct ReflowConfig {
-  int PreheatTemp = 145;
+  int PreheatTemp = 130;
   float PreheatRamp = 5;
   unsigned long PreheatDwel = 60;
-  int FlowTemp = 145;
-  unsigned long FlowDwel = 3600;
+  int FlowTemp = 130;
+  unsigned long FlowDwel = 1800;
   float FlowRamp = 1;
   int CoolRamp = 0;
   int CoolStop = 30;
